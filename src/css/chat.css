@@ -1,0 +1,109 @@
+/* Estilo global */
+body {
+  background-color: #f8f9fa;
+  font-family: Arial, sans-serif;
+}
+
+/* Contenedor principal del chat */
+.chat-container {
+  max-width: 600px;
+  margin: 50px auto;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+}
+
+/* Contenedor de los mensajes */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: #f1f1f1;
+}
+
+/* Estilos para los mensajes */
+.message {
+  margin-bottom: 15px;
+}
+
+.message.user {
+  text-align: right;
+}
+
+.message-text {
+  display: inline-block;
+  padding: 10px 15px;
+  border-radius: 20px;
+  max-width: 75%;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* Estilos para el mensaje del usuario */
+.message.user .message-text {
+  background-color: #0d6efd;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el mensaje del bot */
+.message.others .message-text {
+  background-color: #e9ecef;
+  color: black;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Estilos para la entrada de texto */
+.chat-input {
+  border-top: 1px solid #dee2e6;
+  padding: 10px;
+  background-color: #fafafa;
+}
+
+.chat-input-field {
+  width: 85%; /* Ocupa el 85% del ancho */
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  padding: 10px 15px;
+  outline: none;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+/* Efecto al hacer focus en el input */
+.chat-input-field:focus {
+  border-color: #0d6efd;
+}
+
+/* Estilo para el botón de enviar */
+.chat-send-button {
+  width: 15%; /* Ocupa el 15% del ancho */
+  background-color: #25D366;
+  border: none;
+  border-radius: 50%;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Cambio de color al hacer hover sobre el botón */
+.chat-send-button:hover {
+  background-color: #128C7E;
+}
+
+/* Diseño del formulario */
+form {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 10px; /* Espacio entre el input y el botón */
+  padding: 10px 0;
+}
