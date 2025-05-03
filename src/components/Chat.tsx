@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "../css/chat.css";
+
 interface ChatProps {
   username: string;
 }
+
 export const Chat: React.FC<ChatProps> = ({ username }) => {
   const [mensaje, setMensaje] = useState("");
   const [nombre] = useState(username);

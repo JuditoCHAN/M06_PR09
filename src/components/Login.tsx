@@ -2,16 +2,18 @@ import React, { useState } from "react";
 import "../css/login.css";
 
 interface LoginProps {
-  onLoginSuccess: () => void;
+  onLoginSuccess: (arg0: string) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
-    e.preventDefault(); //que no recarge la pagina
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // que no recarge la pagina
+    setLoading(true);
 
     try {
       const response = await fetch("http://localhost:5001/api/login", {
@@ -24,10 +26,12 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       const data = await response.json();
       alert(`Bienvenido, ${data.username}`);
       setError(null);
-      onLoginSuccess(username || "user"); // Llama a la función de éxito de inicio de sesión
+      onLoginSuccess(username || "user"); // funcion del componente padre que cambia el estado de isLoggedIn a true
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       setError("Credenciales no válidas");
+    } finally {
+        setLoading(false);
     }
   };
 
@@ -50,7 +54,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           className="login-input"
         />
         <button type="submit" className="login-button">
-          Iniciar sesión
+            {loading ? "Cargando..." : "Iniciar sesión"}
         </button>
       </form>
 
