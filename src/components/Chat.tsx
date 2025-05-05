@@ -132,7 +132,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
                 borderRadius: "20px",
                 padding: "12px 20px",
                 flexGrow: 1,
-                marginRight: "10px",
+                marginRight: "7px",
                 fontSize: "16px",
               }}
             />
@@ -140,14 +140,16 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
               type="submit"
               className="chat-send-button"
               style={{
-                backgroundColor: "#007bff",
+                backgroundColor: mensaje ? "#007bff" : "#ddd",
                 border: "none",
                 borderRadius: "50%",
                 width: "50px",
                 padding: "12px",
                 cursor: "pointer",
                 transition: "background-color 0.3s ease",
+                opacity: mensaje ? 1 : 0.5,
               }}
+              disabled={!mensaje}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -163,6 +165,9 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
           </form>
         </div>
       </div>
+      <button>
+        
+      </button>
     </div>
   );
 };
