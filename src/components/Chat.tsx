@@ -52,7 +52,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
     socket?.send(JSON.stringify({ nombre: nombre, mensaje: mensaje }));
     setMessages((prevMessages) => [
       ...prevMessages,
-      { sender: "yo", text: mensaje },
+      { sender: nombre, text: mensaje },
     ]);
     setMensaje("");
   };
@@ -79,11 +79,11 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
             <div
               key={index}
               className={`message ${
-                msg.sender === "yo" ? "user text-end" : "others"
+                msg.sender === nombre ? "user text-end" : "others"
               }`}
             >
               <div className="message-text bg-primary text-white p-3 rounded-4 d-inline-block shadow-sm">
-                <strong>{msg.sender === "yo" ? nombre : msg.sender}:</strong>{" "}
+                <strong>{msg.sender === nombre ? nombre : msg.sender}:</strong>{" "}
                 {msg.text}
               </div>
             </div>
