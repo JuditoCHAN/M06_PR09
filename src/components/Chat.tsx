@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../css/chat.css";
 
 interface ChatProps {
@@ -10,6 +10,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
   const [nombre] = useState(username);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   // Establecer la conexión al WebSocket
   useEffect(() => {
@@ -46,6 +47,10 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
     };
   }, []);
 
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   // envio de mensajes
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); //que no recarge la pagina
@@ -53,9 +58,10 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
     socket?.send(JSON.stringify({ sender: nombre, text: mensaje, date: date.toISOString() }));
     setMessages((prevMessages) => [
       ...prevMessages,
-      { sender: "yo", text: mensaje, date: date.toISOString() },
+      { sender: nombre, text: mensaje, date: date.toISOString() },
     ]);
     setMensaje("");
+    
   };
 
   const handleChangeMensaje = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,6 +82,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
         {/* MENSAJES */}
         <div className="chat-messages flex-grow-1 overflow-auto p-3">
           {/* Renderizar los mensajes desde el estado */}
+
           {messages.map((msg, index) => {
             const hora = msg.date
               ? new Date(msg.date).toLocaleTimeString([], {
@@ -88,12 +95,12 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
               <div
                 key={index}
                 className={`message ${
-                  msg.sender === "yo" ? "user text-end" : "others"
+                  msg.sender === nombre ? "user text-end" : "others"
                 }`}
               >
                 <div className="message-text bg-primary text-white p-3 rounded-4 d-inline-block shadow-sm">
                   <div>
-                    <strong>{msg.sender === "yo" ? nombre : msg.sender}:</strong>{" "}
+                    <strong>{msg.sender === nombre ? nombre : msg.sender}:</strong>{" "}
                     {msg.text}
                   </div>
                   <div style={{ fontSize: "0.75rem", opacity: 0.8, marginTop: "4px" }}>
