@@ -110,6 +110,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
               </div>
             );
           })}
+          <div ref={bottomRef}></div>
         </div>
 
         <div
