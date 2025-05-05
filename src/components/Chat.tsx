@@ -20,10 +20,22 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
       //console.log("Mensaje recibido del servidor:", event.data);
       try {
         const data = JSON.parse(event.data);
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: data.nombre, text: data.mensaje },
-        ]);
+        console.log(data);
+        if(Array.isArray(data)){
+          data.map((msg: any) => {
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              { sender: msg.nombre, text: msg.mensaje },
+            ]);
+          })
+        }else{
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { sender: data.nombre, text: data.mensaje },
+          ]);
+
+        }
+
       } catch (error) {
         console.error("Error al parsear el mensaje recibido:", error);
       }
