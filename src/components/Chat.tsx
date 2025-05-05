@@ -25,13 +25,13 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
           data.map((msg: any) => {
             setMessages((prevMessages) => [
               ...prevMessages,
-              { sender: msg.nombre, text: msg.mensaje },
+              { sender: msg.sender, text: msg.text, date: msg.date },
             ]);
           })
         }else{
           setMessages((prevMessages) => [
             ...prevMessages,
-            { sender: data.nombre, text: data.mensaje },
+            { sender: data.sender, text: data.text, date: data.date },
           ]);
 
         }
@@ -49,10 +49,11 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
   // envio de mensajes
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); //que no recarge la pagina
-    socket?.send(JSON.stringify({ nombre: nombre, mensaje: mensaje }));
+    const date = new Date();
+    socket?.send(JSON.stringify({ sender: nombre, text: mensaje, date: date.toISOString() }));
     setMessages((prevMessages) => [
       ...prevMessages,
-      { sender: "yo", text: mensaje },
+      { sender: "yo", text: mensaje, date: date.toISOString() },
     ]);
     setMensaje("");
   };
@@ -75,19 +76,33 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
         {/* MENSAJES */}
         <div className="chat-messages flex-grow-1 overflow-auto p-3">
           {/* Renderizar los mensajes desde el estado */}
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`message ${
-                msg.sender === "yo" ? "user text-end" : "others"
-              }`}
-            >
-              <div className="message-text bg-primary text-white p-3 rounded-4 d-inline-block shadow-sm">
-                <strong>{msg.sender === "yo" ? nombre : msg.sender}:</strong>{" "}
-                {msg.text}
+          {messages.map((msg, index) => {
+            const hora = msg.date
+              ? new Date(msg.date).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "";
+
+            return (
+              <div
+                key={index}
+                className={`message ${
+                  msg.sender === "yo" ? "user text-end" : "others"
+                }`}
+              >
+                <div className="message-text bg-primary text-white p-3 rounded-4 d-inline-block shadow-sm">
+                  <div>
+                    <strong>{msg.sender === "yo" ? nombre : msg.sender}:</strong>{" "}
+                    {msg.text}
+                  </div>
+                  <div style={{ fontSize: "0.75rem", opacity: 0.8, marginTop: "4px" }}>
+                    {hora}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div
