@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../css/chat.css";
 
 interface ChatProps {
@@ -10,6 +10,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
   const [nombre] = useState(username);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   // Establecer la conexión al WebSocket
   useEffect(() => {
@@ -46,6 +47,10 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
     };
   }, []);
 
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   // envio de mensajes
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); //que no recarge la pagina
@@ -55,6 +60,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
       { sender: nombre, text: mensaje },
     ]);
     setMensaje("");
+    
   };
 
   const handleChangeMensaje = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,6 +94,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
               </div>
             </div>
           ))}
+          <div ref={bottomRef} />
         </div>
 
         <div
