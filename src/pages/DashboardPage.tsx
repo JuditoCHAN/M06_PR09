@@ -1,17 +1,17 @@
-import { FullFileBrowser } from "@aperturerobotics/chonky";
-import { ChonkyIconFA } from "@aperturerobotics/chonky-icon-fontawesome";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import FileManager from "../components/FileManager";
+
+import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/dashboard.css";
 
-function StartPage() {
-  return (
-        <div className="dashboard">   
-            <FullFileBrowser 
-            files={[]}
-            iconComponent={ChonkyIconFA}
-            />
-        </div>
-  );
-}
+// Configurar iconos por defecto
 
-export default StartPage;
+function DashboardPage() {
+  return (
+    <div>
+    <FileManager />
+
+    </div>
+  );
+};  
+
+export default DashboardPage;
