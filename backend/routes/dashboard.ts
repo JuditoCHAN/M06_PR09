@@ -13,13 +13,12 @@ function readFileTree() {
 }
 
 function writeFileTree(tree: unknown) {
-    fs.writeFileSync(fileTreePath, JSON.stringify(tree, null, 2), "utf8");
+  fs.writeFileSync(fileTreePath, JSON.stringify(tree, null, 2), "utf8");
 }
-  
 
 // Para obtener el arbol de los directorios
 router.get("/tree", (req, res) => {
-    console.log("[dashboard] /tree")
+  console.log("[dashboard] /tree");
 
   const fileTree = readFileTree();
   try {
@@ -43,25 +42,25 @@ router.get("/tree", (req, res) => {
 
 // Para crear una nueva carpeta
 router.post("/directory", async (req, res) => {
-    console.log("[dashboard] /directory")
+  console.log("[dashboard] /directory");
 
-    const { path: path, name } = req.body;
-    const fileTree = readFileTree();
-    const subDir = path == "/" ? "/": path+"/";
-    console.log(subDir);
-    fileTree[subDir+name] = {files: []};
-    fileTree[path].files.push({
-        id: subDir+name,
-        name: name,
-        isDir: true
-    });
-    
-    writeFileTree(fileTree);
+  const { path: path, name } = req.body;
+  const fileTree = readFileTree();
+  const subDir = path == "/" ? "/" : path + "/";
+  fileTree.id = fileTree.id+1;
+  fileTree[subDir + name] = { files: [] };
+  fileTree[path].files.push({
+    id: subDir + name,
+    name: name,
+    isDir: true,
+    subId: fileTree.id,
+  });
 
-    res.json({
-      success: true,
-    });
+  writeFileTree(fileTree);
 
+  res.json({
+    success: true,
+  });
 });
 
 export default router;

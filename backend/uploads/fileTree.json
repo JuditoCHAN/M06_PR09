@@ -1,21 +1,25 @@
 {
+  "id": 7,
   "/": {
     "files": [
       {
         "id": "/Documentos",
         "name": "Documentos",
-        "isDir": true
+        "isDir": true,
+        "subId": 0
       },
       {
         "id": "/Imágenes",
         "name": "Imágenes",
-        "isDir": true
+        "isDir": true,
+        "subId": 1
       },
       {
         "id": "/config.yml",
         "name": "config.yml",
         "isDir": false,
-        "size": 890
+        "size": 890,
+        "subId": 2
       }
     ]
   },
@@ -25,18 +29,21 @@
         "id": "/Documentos/Informe.pdf",
         "name": "Informe.pdf",
         "isDir": false,
-        "size": 2500
+        "size": 2500,
+        "subId": 3
       },
       {
         "id": "/Documentos/Presentación.pptx",
         "name": "Presentación.pptx",
         "isDir": false,
-        "size": 4500
+        "size": 4500,
+        "subId": 4
       },
       {
         "id": "/Documentos/prueba",
         "name": "prueba",
-        "isDir": true
+        "isDir": true,
+        "subId": 5
       }
     ]
   },
@@ -46,11 +53,9 @@
         "id": "/Imágenes/vacaciones.jpg",
         "name": "vacaciones.jpg",
         "isDir": false,
-        "size": 3200
+        "size": 3200,
+        "subId": 6
       }
     ]
-  },
-  "/Documentos/prueba": {
-    "files": []
   }
 }
