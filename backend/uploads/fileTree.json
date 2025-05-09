@@ -1,5 +1,5 @@
 {
-  "id": 7,
+  "id": 8,
   "/": {
     "files": [
       {
@@ -57,5 +57,8 @@
         "subId": 6
       }
     ]
+  },
+  "/Documentos/prueba": {
+    "files": []
   }
 }
