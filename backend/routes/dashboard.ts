@@ -80,15 +80,11 @@ router.delete("", async (req, res) => {
     if (nombresRutas !== "id") {
       for (let index = 0; index < fileTree[nombresRutas].files.length; index++) {
         const element = fileTree[nombresRutas].files[index];
-        console.log(deleteSubId)
-        console.log(element.subId)
-
         if (element.subId == deleteSubId) {
           if (element.isDir) {
             delete fileTree[element.id];
           }
           fileTree[nombresRutas].files.splice(index, 1);
-          console.log("eliminado")
           break all;
         }
       }
