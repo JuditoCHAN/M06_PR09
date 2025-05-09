@@ -4,6 +4,7 @@ import WebSocket from 'ws';
 import cors from 'cors';
 import authRoutes from './routes/auth';
 import { initChatWebSocket } from './routes/chat';
+import dashboard from './routes/dashboard';
 
 // import messageRoutes from './routes/messages';
 
@@ -30,6 +31,8 @@ app.use(express.json());
 
 // Rutas de autenticación: todas las rutas de auth.ts estarán disponibles bajo el prefijo /api
 app.use('/api', authRoutes);
+app.use('/dashboard', dashboard);
+
 
 // Iniciar el servidor
 server.listen(PORT, () => {

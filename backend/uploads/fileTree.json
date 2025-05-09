@@ -1,0 +1,48 @@
+{
+  "/": {
+    "files": [
+      {
+        "id": "/Documentos",
+        "name": "Documentos",
+        "isDir": true
+      },
+      {
+        "id": "/Imágenes",
+        "name": "Imágenes",
+        "isDir": true
+      },
+      {
+        "id": "/config.yml",
+        "name": "config.yml",
+        "isDir": false,
+        "size": 890
+      }
+    ]
+  },
+  "/Documentos": {
+    "files": [
+      {
+        "id": "/Documentos/Informe.pdf",
+        "name": "Informe.pdf",
+        "isDir": false,
+        "size": 2500
+      },
+      {
+        "id": "/Documentos/Presentación.pptx",
+        "name": "Presentación.pptx",
+        "isDir": false,
+        "size": 4500
+      }
+    ]
+  },
+  "/Imágenes": {
+    "files": [
+      {
+        "id": "/Imágenes/vacaciones.jpg",
+        "name": "vacaciones.jpg",
+        "isDir": false,
+        "size": 3200
+      }
+    ]
+  }
+}
