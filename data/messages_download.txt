@@ -1,8 +1,14 @@
 [
   {
     "sender": "root",
-    "text": "holi",
-    "date": "2025-05-08T23:57:46.130Z",
+    "text": "holi otra vez",
+    "date": "2025-05-09T00:04:54.601Z",
+    "type": "message"
+  },
+  {
+    "sender": "profe",
+    "text": "eso digo yo",
+    "date": "2025-05-09T00:05:12.664Z",
     "type": "message"
   }
 ]

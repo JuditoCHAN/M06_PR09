@@ -14,7 +14,6 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
   const [historial, setHistorial] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
 
-
   const handleVerHistorial = async () => {
     try {
       const res = await fetch('http://localhost:5001/api/messages/view_hist');
@@ -26,7 +25,6 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
     }
   };
 
-  
   // Establecer la conexión al WebSocket
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:5001/chat");
