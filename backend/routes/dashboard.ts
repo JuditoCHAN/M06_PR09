@@ -47,10 +47,11 @@ router.post("/directory", async (req, res) => {
 
     const { path: path, name } = req.body;
     const fileTree = readFileTree();
-
-    fileTree["/"+name] = {files: []};
+    const subDir = path == "/" ? "/": path+"/";
+    console.log(subDir);
+    fileTree[subDir+name] = {files: []};
     fileTree[path].files.push({
-        id: "/"+name,
+        id: subDir+name,
         name: name,
         isDir: true
     });

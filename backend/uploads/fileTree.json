@@ -32,6 +32,11 @@
         "name": "Presentación.pptx",
         "isDir": false,
         "size": 4500
+      },
+      {
+        "id": "/Documentos/prueba",
+        "name": "prueba",
+        "isDir": true
       }
     ]
   },
@@ -44,5 +49,8 @@
         "size": 3200
       }
     ]
+  },
+  "/Documentos/prueba": {
+    "files": []
   }
 }
