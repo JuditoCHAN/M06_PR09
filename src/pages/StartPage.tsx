@@ -7,8 +7,8 @@ const StartPage: React.FC = () => {
   const [username, setUsername] = useState("");
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    const storedLoginStatus = localStorage.getItem("isLoggedIn");
+    const storedUsername = sessionStorage.getItem("username");
+    const storedLoginStatus = sessionStorage.getItem("isLoggedIn");
 
     if (storedUsername && storedLoginStatus === "true") {
       setUsername(storedUsername);
@@ -17,8 +17,8 @@ const StartPage: React.FC = () => {
   }, []);
 
   const handleLoginSuccess = (username: string) => {
-    localStorage.setItem("username", username);
-    localStorage.setItem("isLoggedIn", "true");
+    sessionStorage.setItem("username", username);
+    sessionStorage.setItem("isLoggedIn", "true");
     setUsername(username);
     setIsLoggedIn(true);
   };

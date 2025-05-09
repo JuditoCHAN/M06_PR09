@@ -11,32 +11,45 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const [historial, setHistorial] = useState<any[]>([]);
+  const [showModal, setShowModal] = useState(false);
 
+
+  const handleVerHistorial = async () => {
+    try {
+      const res = await fetch('http://localhost:5001/api/messages/view_hist');
+      const data = await res.json();
+      setHistorial(data);
+      setShowModal(true);
+    } catch (error) {
+      console.error('Error al obtener historial:', error);
+    }
+  };
+
+  
   // Establecer la conexión al WebSocket
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:5001/chat");
     setSocket(ws);
 
     ws.onmessage = (event) => {
-      //console.log("Mensaje recibido del servidor:", event.data);
       try {
         const data = JSON.parse(event.data);
-        console.log(data);
         if(Array.isArray(data)){
+          // historial de mensajes
           data.map((msg: any) => {
             setMessages((prevMessages) => [
               ...prevMessages,
-              { sender: msg.sender, text: msg.text, date: msg.date },
+              { sender: msg.sender, text: msg.text, date: msg.date, type: msg.type },
             ]);
           })
         }else{
+          // mensaje individual
           setMessages((prevMessages) => [
             ...prevMessages,
-            { sender: data.sender, text: data.text, date: data.date },
+            { sender: data.sender, text: data.text, date: data.date, type: data.type },
           ]);
-
         }
-
       } catch (error) {
         console.error("Error al parsear el mensaje recibido:", error);
       }
@@ -55,18 +68,23 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); //que no recarge la pagina
     const date = new Date();
-    socket?.send(JSON.stringify({ sender: nombre, text: mensaje, date: date.toISOString() }));
+    socket?.send(JSON.stringify({ sender: nombre, text: mensaje, date: date.toISOString(), type: 'message' }));
     setMessages((prevMessages) => [
       ...prevMessages,
-      { sender: nombre, text: mensaje, date: date.toISOString() },
+      { sender: nombre, text: mensaje, date: date.toISOString(), type: 'message' },
     ]);
     setMensaje("");
-    
+
   };
 
   const handleChangeMensaje = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMensaje(e.target.value);
   };
+
+  const exportChats = () => {
+    window.open("http://localhost:5001/api/messages/export_hist", "_blank");
+  };
+  
 
   return (
     <div className="container py-4">
@@ -91,6 +109,14 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
                 })
               : "";
 
+            if (msg.type === 'notification') {
+              return (
+                <div key={index} className="text-center text-secondary mb-2" style={{ fontSize: "0.85rem" }}>
+                  {msg.text}
+                </div>
+              );
+            }
+
             return (
               <div
                 key={index}
@@ -110,6 +136,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
               </div>
             );
           })}
+          <div ref={bottomRef}></div>
         </div>
 
         <div
@@ -145,7 +172,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
                 borderRadius: "50%",
                 width: "50px",
                 padding: "12px",
-                cursor: "pointer",
+                cursor: mensaje ? "pointer" : "default",
                 transition: "background-color 0.3s ease",
                 opacity: mensaje ? 1 : 0.5,
               }}
@@ -165,9 +192,49 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
           </form>
         </div>
       </div>
-      <button>
-        
+
+      <button onClick={exportChats} className="btn btn-primary mt-3">
+        Exportar chats
       </button>
+
+      <button onClick={handleVerHistorial} className="btn btn-info mt-3 mx-4">
+        Visualizar historial
+      </button>
+
+      {showModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+          onClick={() => setShowModal(false)} // cerrar al hacer clic fuera
+        >
+          <div
+            style={{
+              backgroundColor: 'white',
+              padding: '20px',
+              borderRadius: '10px',
+              maxWidth: '90%',
+              maxHeight: '80%',
+              overflowY: 'auto',
+            }}
+            onClick={(e) => e.stopPropagation()} // evita que al hacer clic dentro se cierre
+          >
+            <h5>Historial de mensajes</h5>
+            <pre style={{ whiteSpace: 'pre-wrap' }}>
+              {JSON.stringify(historial, null, 2)}
+            </pre>
+            <button onClick={() => setShowModal(false)} className="btn btn-sm btn-secondary mt-3">
+              Cerrar
+            </button>
+          </div>
+        </div>
+        )}
     </div>
   );
 };

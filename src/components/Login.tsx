@@ -54,7 +54,12 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           className="login-input"
         />
         <button type="submit" className="login-button">
-            {loading ? "Cargando..." : "Iniciar sesión"}
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span> Cargando ...</span>
+              </>)
+              : "Iniciar sesión"}
         </button>
       </form>
 
