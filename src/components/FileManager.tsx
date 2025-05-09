@@ -70,6 +70,14 @@ const FileManager = () => {
       setCurrentPath(file.id);
     }
   };
+  const handleDelete = (subId:number)=>{
+    const response = fetch("http://localhost:5001/dashboard?subId="+subId, {
+      method: "delete",
+
+    }).then();
+
+    reload();
+  }
   const handleCreateDirectory = async () => {
     const directoryName = prompt("Ingrese el nombre del nuevo directorio:");
     
@@ -120,7 +128,11 @@ const FileManager = () => {
     if (data.id === ChonkyActions.UploadFiles.id) alert("Upload Folder Action");
     if (data.id === ChonkyActions.DownloadFiles.id)
       alert("Download Folder Action");
-    if (data.id === ChonkyActions.DeleteFiles.id) alert("Delete Folder Action");  
+    if (data.id === ChonkyActions.DeleteFiles.id) {
+      data.state.selectedFiles.forEach((element:unknown) => {
+        handleDelete(element.subId)
+      });
+    };  
     if (data.id === ChonkyActions.OpenFiles.id) {
       handleFileOpen(data.payload.files[0]);
     } else if (data.id === "go_back") {
