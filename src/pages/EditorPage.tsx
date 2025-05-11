@@ -1,16 +1,16 @@
-import FileManager from "../components/FileManager";
+import Editor from "../components/Editor";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../css/dashboard.css";
 
 // Configurar iconos por defecto
 
-function DashboardPage() {
+function EditorPage() {
   return (
     <div>
-      <FileManager />
+      <Editor />
     </div>
   );
 };  
 
-export default DashboardPage;
+export default EditorPage;
