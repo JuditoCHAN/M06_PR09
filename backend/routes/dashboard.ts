@@ -69,6 +69,55 @@ router.post("/directory", (req, res) => {
   res.json({ success: true });
 });
 
+router.post("/rename", (req, res) => {
+  console.log("[dashboard] Solicitud a /rename");
+
+  const { oldPath, newName } = req.body; 
+  const fileTree = readFileTree();
+  
+  const folderToRename = fileTree[oldPath];
+  if (!folderToRename) {
+    return res.status(404).json({ error: "Folder not found" });
+  }
+
+  const newFolderPath = path.dirname(oldPath) + newName;
+
+  fileTree[newFolderPath] = fileTree[oldPath];
+  delete fileTree[oldPath];
+
+  const parentPath = path.dirname(oldPath);
+  const parentDir = fileTree[parentPath];
+  if (parentDir) {
+    parentDir.files = parentDir.files.map((file:any) =>
+      file.id === oldPath ? { ...file, id: newFolderPath, name: newName } : file
+    );
+  }
+
+  writeFileTree(fileTree);
+
+  res.json({ success: true });
+});
+
+// Edit a folder's metadata
+router.post("/edit", (req, res) => {
+  console.log("[dashboard] Solicitud a /edit");
+
+  const { path, metadata } = req.body; 
+  const fileTree = readFileTree();
+  
+  const folder = fileTree[path];
+  if (!folder) {
+    return res.status(404).json({ error: "Folder not found" });
+  }
+
+  folder.metadata = metadata;
+
+  writeFileTree(fileTree);
+
+  res.json({ success: true });
+});
+
+
 // Eliminar un directorio o archivo
 router.delete("", async (req, res) => {
   console.log("[dashboard] delete");

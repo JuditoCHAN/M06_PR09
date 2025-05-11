@@ -108,6 +108,94 @@ const FileManager = () => {
       alert("Error al crear directorio");
     }
   };
+const handleRenameFolder = async (folderPath) => {
+  const newName = prompt("Enter new folder name:");
+
+  if (!newName) return;
+
+  try {
+    const response = await fetch("http://localhost:5001/dashboard/rename", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        oldPath: folderPath,
+        newName,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      alert(`Folder renamed to: ${newName}`);
+      reload();
+    } else {
+      alert(`Error: ${result.error}`);
+    }
+  } catch (error) {
+    console.error("Error renaming folder:", error);
+    alert("Error renaming folder");
+  }
+};
+const handleEditFolder = async (folderPath) => {
+  const metadata = prompt("Enter new metadata:");
+
+  if (!metadata) return;
+
+  try {
+    const response = await fetch("http://localhost:5001/dashboard/edit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        path: folderPath,
+        metadata,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      alert(`Folder edited with new metadata`);
+      reload();
+    } else {
+      alert(`Error: ${result.error}`);
+    }
+  } catch (error) {
+    console.error("Error editing folder:", error);
+    alert("Error editing folder");
+  }
+};
+const handleUploadFile = async (folderPath) => {
+  const formData = new FormData();
+  const file = document.getElementById("fileInput").files[0]; // Assuming you have an <input id="fileInput" />
+
+  if (!file) return;
+
+  formData.append("file", file);
+  formData.append("path", folderPath);
+
+  try {
+    const response = await fetch("http://localhost:5001/dashboard/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      alert(`File uploaded: ${file.name}`);
+      reload();
+    } else {
+      alert(`Error: ${result.error}`);
+    }
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    alert("Error uploading file");
+  }
+};
 
   // Acción personalizada para navegar hacia atrás
   const goBack = defineFileAction({
@@ -119,29 +207,57 @@ const FileManager = () => {
     },
   });
 
-  const handleAction = (data) => {
-    if (data.id === createNewFolder.id) {
-      handleCreateDirectory();
-    };
-    if (data.id === editFiles.id) alert("Edit Folder Action");
-    if (data.id === renameFiles.id) alert("Rename Folder Action");
-    if (data.id === ChonkyActions.UploadFiles.id) alert("Upload Folder Action");
-    if (data.id === ChonkyActions.DownloadFiles.id)
-      alert("Download Folder Action");
-    if (data.id === ChonkyActions.DeleteFiles.id) {
-      data.state.selectedFiles.forEach((element:unknown) => {
-        handleDelete(element.subId)
-      });
-    };  
-    if (data.id === ChonkyActions.OpenFiles.id) {
-      handleFileOpen(data.payload.files[0]);
-    } else if (data.id === "go_back") {
-      // Navegar al directorio padre
-      const parentPath = currentPath.split("/").slice(0, -1).join("/") || "/";
-      setCurrentPath(parentPath);
+const handleAction = (data) => {
+  if (data.id === createNewFolder.id) {
+    handleCreateDirectory();
+  }
+
+  // Handle Edit Folder action
+  if (data.id === editFiles.id) {
+    const selectedFile = data.state.selectedFiles[0];
+    if (selectedFile) {
+      handleEditFolder(selectedFile.id);  
     }
-    // Otras acciones...
-  };
+  }
+
+  // Handle Rename Folder action
+  if (data.id === renameFiles.id) {
+    const selectedFile = data.state.selectedFiles[0]; 
+    if (selectedFile) {
+      handleRenameFolder(selectedFile.id); 
+    }
+  }
+
+  // Handle Upload Files action
+  if (data.id === ChonkyActions.UploadFiles.id) {
+    const selectedFile = data.state.selectedFiles[0]; 
+    if (selectedFile && selectedFile.isDir) {
+      handleUploadFile(selectedFile.id); 
+    }
+  }
+
+  // Handle Download Files action
+  if (data.id === ChonkyActions.DownloadFiles.id) {
+    alert("Download Folder Action");
+  }
+
+  // Handle Delete Files action
+  if (data.id === ChonkyActions.DeleteFiles.id) {
+    data.state.selectedFiles.forEach((element) => {
+      handleDelete(element.subId);
+    });
+  }
+
+  // Handle file open action
+  if (data.id === ChonkyActions.OpenFiles.id) {
+    handleFileOpen(data.payload.files[0]);
+  } else if (data.id === "go_back") {
+    // Navigate to the parent directory
+    const parentPath = currentPath.split("/").slice(0, -1).join("/") || "/";
+    setCurrentPath(parentPath);
+  }
+
+};
 
   
   const createNewFolder = defineFileAction({
