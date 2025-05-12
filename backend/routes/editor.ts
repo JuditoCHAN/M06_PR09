@@ -3,14 +3,14 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { Server as HTTPServer } from 'http';
 
 export function initEditorWebSocket(server: HTTPServer, path: string = '/editor') {
-  const wssEditor = new WebSocketServer({ server, path: '/editor' });
+  const wssEditor = new WebSocketServer({ server, path });
   const clients: WebSocket[] = [];
   const messages: any[] = [];
 
   wssEditor.on('connection', (ws: WebSocket) => {
     clients.push(ws);
     console.log('[Editor] Cliente conectado en /editor');
-    
+
     ws.send(JSON.stringify(messages));
 
     ws.on('message', (data) => {

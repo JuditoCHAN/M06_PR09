@@ -72,7 +72,6 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
       { sender: nombre, text: mensaje, date: date.toISOString(), type: 'message' },
     ]);
     setMensaje("");
-
   };
 
   const handleChangeMensaje = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,7 +85,6 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
   const borrarChats = () => {
     setMessages([]);
   }
-  
 
   return (
     <div className="container py-4">

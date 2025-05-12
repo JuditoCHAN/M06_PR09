@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Login from "../components/Login";
 import { Chat } from "../components/Chat";
+import RealTimeEditor from "../components/Editor";
+import FileManager from "../components/FileManager";
 
 const StartPage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -24,11 +26,11 @@ const StartPage: React.FC = () => {
   };
 
   return (
-    <main>
+    <main className="container-fluid vh-100 d-flex flex-column">
       {isLoggedIn ? (
         <>
           <nav className={"navbar navbar-expand-lg navbar-dark bg-primary w-100 px-4"}>
-            <h1  className={"navbar-brand mb-0 h1"}>Bienvenido, {username}</h1>
+            <h1 className={"navbar-brand mb-0 h1"}>Bienvenido, {username}</h1>
             <button className={"btn btn-danger ms-auto"}
               onClick={() => {
                 sessionStorage.clear();
@@ -39,10 +41,24 @@ const StartPage: React.FC = () => {
             </button>
           </nav>
           
-          <Chat username={username} />
+          <div className="row flex-grow-1 overflow-hidden">
+            <div className="col-3 h-100 overflow-auto">
+              <FileManager />
+            </div>
+            <div className="col-6 h-100 overflow-auto">
+              <RealTimeEditor />
+            </div>
+            <div className="col-3 h-100 overflow-auto">
+              <Chat username={username} />
+            </div>
+          </div>
         </>
       ) : (
-        <Login onLoginSuccess={handleLoginSuccess} />
+        <div className="row h-100 align-items-center justify-content-center">
+          <div className="col-12 d-flex justify-content-center">
+            <Login onLoginSuccess={handleLoginSuccess} />
+          </div>
+        </div>
       )}
     </main>
   );
