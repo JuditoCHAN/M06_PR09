@@ -7,9 +7,8 @@ import path from 'path';
 // Archivo para guardar los mensajes
 const filePath = path.join(__dirname, '../../data/messages.json');
 
-
-export function initChatWebSocket(server: HTTPServer,path: string = '/chat') {
-  const wss = new WebSocketServer({ server, path }); 
+export function initChatWebSocket(server: HTTPServer, path: string = '/chat') {
+  const wss = new WebSocketServer({ server, path });
   const clients: WebSocket[] = [];
   const messages: any[] = [];
 
@@ -72,7 +71,7 @@ export function initChatWebSocket(server: HTTPServer,path: string = '/chat') {
           }
         });
       } catch (err) {
-        console.error('Mensaje inválido:', err);
+        console.error('[Chat] Error al procesar mensaje:', err);
       }
     });
 
@@ -92,4 +91,6 @@ export function initChatWebSocket(server: HTTPServer,path: string = '/chat') {
       console.log('[Chat] Cliente desconectado');
     });
   });
+
+  console.log('WebSocket del chat inicializado en /chat');
 }
