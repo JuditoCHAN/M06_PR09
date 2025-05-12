@@ -26,7 +26,21 @@ const StartPage: React.FC = () => {
   return (
     <main>
       {isLoggedIn ? (
-        <Chat username={username} />
+        <>
+          <nav className={"navbar navbar-expand-lg navbar-dark bg-primary w-100 px-4"}>
+            <h1  className={"navbar-brand mb-0 h1"}>Bienvenido, {username}</h1>
+            <button className={"btn btn-danger ms-auto"}
+              onClick={() => {
+                sessionStorage.clear();
+                setIsLoggedIn(false);
+              }}
+            >
+              Cerrar sesión
+            </button>
+          </nav>
+          
+          <Chat username={username} />
+        </>
       ) : (
         <Login onLoginSuccess={handleLoginSuccess} />
       )}

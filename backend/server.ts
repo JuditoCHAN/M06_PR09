@@ -12,9 +12,6 @@ const PORT = 5001;
 // npx ts-node server.ts  --> para ejecutar el servidor
 // npx ts-node-dev server.ts  --> para ejecutar y q se reinicie automáticamente el servidor al guardar cambios
 
-// Rutas de mensajes e historial
-// app.use('/api/messages', messageRoutes);
-
 const server = http.createServer(app);
 
 // Inicializar el chat

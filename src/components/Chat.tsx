@@ -82,19 +82,15 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
   const exportChats = () => {
     window.open("http://localhost:5001/api/messages/export_hist", "_blank");
   };
+
+  const borrarChats = () => {
+    setMessages([]);
+  }
   
 
   return (
     <div className="container py-4">
-      <div
-        className="chat-container d-flex flex-column rounded-4 shadow-lg overflow-hidden"
-        style={{
-          backgroundColor: "white",
-          height: "80vh",
-          maxWidth: "600px",
-          margin: "0 auto",
-        }}
-      >
+      <div className="chat-container d-flex flex-column rounded-4 shadow-lg overflow-hidden">
         {/* MENSAJES */}
         <div className="chat-messages flex-grow-1 overflow-auto p-3">
           {/* Renderizar los mensajes desde el estado */}
@@ -109,7 +105,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
 
             if (msg.type === 'notification') {
               return (
-                <div key={index} className="text-center text-secondary mb-2" style={{ fontSize: "0.85rem" }}>
+                <div key={index} className="text-center text-secondary my-3" style={{ fontSize: "0.85rem" }}>
                   {msg.text}
                 </div>
               );
@@ -122,13 +118,23 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
                   msg.sender === nombre ? "user text-end" : "others"
                 }`}
               >
-                <div className="message-text bg-primary text-white p-3 rounded-4 d-inline-block shadow-sm">
-                  <div>
-                    <strong>{msg.sender === nombre ? nombre : msg.sender}:</strong>{" "}
-                    {msg.text}
+                {/* <div className="message-text p-3 d-inline-block shadow-sm">
+                  <div className="message-sender mb-1">
+                    <strong>{msg.sender === nombre ? nombre : msg.sender}</strong>
                   </div>
-                  <div style={{ fontSize: "0.75rem", opacity: 0.8, marginTop: "4px" }}>
+                  <div>{msg.text}</div>
+                </div>
+                <div className={`messageHour ${
+                  msg.sender === nombre ? "user" : "others"}`}>
                     {hora}
+                </div> */}
+                <div className="message-text-wrapper">
+                  <div className="message-sender">
+                    <strong>{msg.sender === nombre ? nombre : msg.sender}</strong>
+                  </div>
+                  <div className="message-text p-3 d-inline-block shadow-sm position-relative">
+                    <div>{msg.text}</div>
+                    <div className="message-hour-inside">{hora}</div>
                   </div>
                 </div>
               </div>
@@ -139,7 +145,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
 
         <div
           className="chat-input border-top p-3"
-          style={{ backgroundColor: "#f7f7f7" }}
+          style={{ backgroundColor: "#f0f2f5" }}
         >
           <form
             className="d-flex align-items-center w-100"
@@ -152,14 +158,6 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
               className="chat-input-field"
               value={mensaje}
               onChange={handleChangeMensaje}
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: "20px",
-                padding: "12px 20px",
-                flexGrow: 1,
-                marginRight: "7px",
-                fontSize: "16px",
-              }}
             />
             <button
               type="submit"
@@ -173,13 +171,16 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
                 cursor: mensaje ? "pointer" : "default",
                 transition: "background-color 0.3s ease",
                 opacity: mensaje ? 1 : 0.5,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               }}
               disabled={!mensaje}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
+                width="22"
+                height="21"
                 fill="white"
                 className="bi bi-send-fill"
                 viewBox="0 0 16 16"
@@ -191,13 +192,34 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
         </div>
       </div>
 
-      <button onClick={exportChats} className="btn btn-primary mt-3">
-        Exportar chats
-      </button>
-
-      <button onClick={handleVerHistorial} className="btn btn-info mt-3 mx-4">
-        Visualizar historial
-      </button>
+      <div className="btn-group dropup mt-3">
+        <button
+          type="button"
+          className="btn btn-secondary dropdown-toggle"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i className="bi bi-gear me-2"></i>
+          <span className="me-2">Opciones</span>
+        </button>
+        <ul className="dropdown-menu">
+          <li>
+            <button className="dropdown-item" onClick={exportChats}>
+              Exportar chats
+            </button>
+          </li>
+          <li>
+            <button className="dropdown-item" onClick={handleVerHistorial}>
+              Visualizar historial
+            </button>
+          </li>
+          <li>
+            <button className="dropdown-item" onClick={borrarChats}>
+              Borrar chats
+            </button>
+          </li>
+        </ul>
+      </div>
 
       {showModal && (
         <div

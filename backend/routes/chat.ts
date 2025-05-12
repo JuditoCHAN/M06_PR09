@@ -13,8 +13,27 @@ export function initChatWebSocket(server: HTTPServer,path: string = '/chat') {
   const clients: WebSocket[] = [];
   const messages: any[] = [];
 
+  // Cargar mensajes desde el JSON al iniciar el servidor
+  function loadMessagesFromFile() {
+    try {
+      if(fs.existsSync(filePath)) {
+        const data = fs.readFileSync(filePath, 'utf-8');
+        const loadedMessages = JSON.parse(data);
+        if (Array.isArray(loadedMessages)) {
+          loadedMessages.forEach((msg: any) => {
+            messages.push(msg);
+          });
+        } else {
+          console.error('El formato del archivo de mensajes no es válido');
+        }
+      }
+    } catch (err) {
+      console.error('Erro al cargar los mensajes:', err);
+    }
+  }
 
-  // Guardar mensajes en el JSON
+
+  // Guardar mensajes en el JSON (cada vez que se recibe un mensaje)
   function saveMessagesToFile() {
     try {
       fs.writeFileSync(filePath, JSON.stringify(messages, null, 2), 'utf-8');
@@ -23,6 +42,7 @@ export function initChatWebSocket(server: HTTPServer,path: string = '/chat') {
     }
   }
 
+  loadMessagesFromFile(); // cargamos mensajes al iniciar el servidor
 
   wss.on('connection', (ws: WebSocket) => {
     clients.push(ws);
@@ -38,12 +58,13 @@ export function initChatWebSocket(server: HTTPServer,path: string = '/chat') {
 
     // enviar el historial de mensajes al nuevo cliente
     ws.send(JSON.stringify(messages));
+    ws.send(JSON.stringify({ type: 'notification', text: 'Te has unido al chat' }));
 
     ws.on('message', (data) => {
       try {
         const msg = JSON.parse(data.toString());
-        messages.push(msg);
         console.log('[Chat] Mensaje recibido:', msg);
+        messages.push(msg);
         saveMessagesToFile();
         clients.forEach((client) => {
           if (client !== ws && client.readyState === WebSocket.OPEN) { // enviar mensaje a los demás clientes
