@@ -7,8 +7,8 @@ const StartPage: React.FC = () => {
   const [username, setUsername] = useState("");
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    const storedLoginStatus = localStorage.getItem("isLoggedIn");
+    const storedUsername = sessionStorage.getItem("username");
+    const storedLoginStatus = sessionStorage.getItem("isLoggedIn");
 
     if (storedUsername && storedLoginStatus === "true") {
       setUsername(storedUsername);
@@ -17,8 +17,8 @@ const StartPage: React.FC = () => {
   }, []);
 
   const handleLoginSuccess = (username: string) => {
-    localStorage.setItem("username", username);
-    localStorage.setItem("isLoggedIn", "true");
+    sessionStorage.setItem("username", username);
+    sessionStorage.setItem("isLoggedIn", "true");
     setUsername(username);
     setIsLoggedIn(true);
   };
@@ -26,7 +26,21 @@ const StartPage: React.FC = () => {
   return (
     <main>
       {isLoggedIn ? (
-        <Chat username={username} />
+        <>
+          <nav className={"navbar navbar-expand-lg navbar-dark bg-primary w-100 px-4"}>
+            <h1  className={"navbar-brand mb-0 h1"}>Bienvenido, {username}</h1>
+            <button className={"btn btn-danger ms-auto"}
+              onClick={() => {
+                sessionStorage.clear();
+                setIsLoggedIn(false);
+              }}
+            >
+              Cerrar sesión
+            </button>
+          </nav>
+          
+          <Chat username={username} />
+        </>
       ) : (
         <Login onLoginSuccess={handleLoginSuccess} />
       )}
