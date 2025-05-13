@@ -1,3 +1,4 @@
+import JoditEditor from 'jodit-react';
 import React, { useState, useEffect, useRef } from 'react';
 
 const RealTimeEditor = () => {
@@ -44,12 +45,16 @@ const RealTimeEditor = () => {
 
   return (
     <div>
-      <textarea
+      <JoditEditor
         value={content}
-        onChange={(e) => handleContentChange(e.target.value)}
-        style={{ width: '100%', height: '90vh', resize: 'none' }}
-      ></textarea>
+        config={{ readonly: false, height: 400 }}
+        onChange={(e) => handleContentChange(e)}
+        onBlur={handleContentChange}
+      />
+
+
     </div>
+    
   );
 };
 
