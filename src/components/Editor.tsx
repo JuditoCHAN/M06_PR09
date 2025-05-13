@@ -7,7 +7,7 @@ const RealTimeEditor = () => {
   const clientId = useRef(crypto.randomUUID());
 
   useEffect(() => {
-    ws.current = new WebSocket('ws://localhost:5000/editor');
+    ws.current = new WebSocket('ws://localhost:5002/editor');
 
     ws.current.onopen = () => {
       console.log('[WebSocket] Conectado al servidor');
@@ -30,9 +30,9 @@ const RealTimeEditor = () => {
   }, [content]);
 
   const handleContentChange = (newContent) => {
-    setContent(newContent);
+    //setContent(newContent);
     if (ws.current?.readyState === WebSocket.OPEN) {
-      ws.current.send(JSON.stringify({ content: newContent, author: clientId.current }));
+     // ws.current.send(JSON.stringify({ content: newContent, author: clientId.current }));
     }
   };
   return (
@@ -41,6 +41,7 @@ const RealTimeEditor = () => {
         value={content}
         config={{ readonly: false, height: 400 }}
         onChange={handleContentChange}
+        onBlur={handleContentChange}
       />
     </div>
   );

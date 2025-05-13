@@ -4,9 +4,11 @@ import { Chat } from "../components/Chat";
 import RealTimeEditor from "../components/Editor";
 import FileManager from "../components/FileManager";
 
+
 const StartPage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
+  const [fileSelector, setFileSelector] = useState(null);
 
   useEffect(() => {
     const storedUsername = sessionStorage.getItem("username");
@@ -25,6 +27,11 @@ const StartPage: React.FC = () => {
     setIsLoggedIn(true);
   };
 
+  useEffect(() => {
+    console.log(fileSelector);
+  },[fileSelector])
+
+  
   return (
     <main className="container-fluid vh-100 d-flex flex-column">
       {isLoggedIn ? (
@@ -42,12 +49,24 @@ const StartPage: React.FC = () => {
           </nav>
           
           <div className="row flex-grow-1 overflow-hidden">
-            <div className="col-3 h-100 overflow-auto">
-              <FileManager />
+          
+          {fileSelector ? (
+            <>
+              <div className="col-3 h-100 overflow-auto">
+                <FileManager setFileSelector={setFileSelector} />
+              </div>
+              <div className="col-6 h-100 overflow-auto">
+                <RealTimeEditor />
+              </div>
+            </>
+          ) : (
+            <div className="col-9 h-100 overflow-auto">
+              <FileManager setFileSelector={setFileSelector} />
             </div>
-            <div className="col-6 h-100 overflow-auto">
-              <RealTimeEditor />
-            </div>
+          )}
+            
+            
+
             <div className="col-3 h-100 overflow-auto">
               <Chat username={username} />
             </div>
