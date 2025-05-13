@@ -36,7 +36,7 @@ const StartPage: React.FC = () => {
     <main className="container-fluid vh-100 d-flex flex-column">
       {isLoggedIn ? (
         <>
-          <nav className={"navbar navbar-expand-lg navbar-dark bg-primary w-100 px-4"}>
+          <nav className={"navbar navbar-expand-lg navbar-dark bg-primary w-100 px-4"} style={{height: "10vh"}}>
             <h1 className={"navbar-brand mb-0 h1"}>Bienvenido, {username}</h1>
             <button className={"btn btn-danger ms-auto"}
               onClick={() => {

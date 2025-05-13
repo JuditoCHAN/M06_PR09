@@ -300,7 +300,7 @@ const handleAction = (data) => {
     ChonkyActions.DeleteFiles
   ];
   return (
-    <div style={{ height: "80vh" }}>
+    <div style={{ height: "90vh" }}>
       <FileBrowser
         files={files}
         folderChain={folderChain}
