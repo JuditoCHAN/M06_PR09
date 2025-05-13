@@ -71,7 +71,16 @@ const StartPage: React.FC = () => {
               <Chat username={username} />
             </div>
           </div>
+          <style type="text/css">
+            {`
+              body {
+                background-color: #f8f9fa !important;
+                background: none;
+              }
+            `}
+          </style>
         </>
+        
       ) : (
         <div className="row h-100 align-items-center justify-content-center">
           <div className="col-12 d-flex justify-content-center">
