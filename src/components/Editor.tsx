@@ -30,7 +30,7 @@ const RealTimeEditor = () => {
   }, [content]);
 
   const handleContentChange = (newContent) => {
-    setContent(newContent);
+    //setContent(newContent);
     if (ws.current?.readyState === WebSocket.OPEN) {
       ws.current.send(
         JSON.stringify({

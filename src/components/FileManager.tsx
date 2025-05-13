@@ -14,7 +14,7 @@ import {
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
-const FileManager = () => {
+const FileManager = ({setFileSelector } ) => {
   const [files, setFiles] = useState([]);
   const [folderChain, setFolderChain] = useState([{ 
     id: "/", 
@@ -68,6 +68,8 @@ const FileManager = () => {
   const handleFileOpen = (file) => {
     if (file.isDir) {
       setCurrentPath(file.id);
+    }else{
+      setFileSelector(file.id);
     }
   };
   const handleDelete = (subId:number)=>{
@@ -252,7 +254,6 @@ const handleAction = (data) => {
   if (data.id === ChonkyActions.OpenFiles.id) {
     handleFileOpen(data.payload.files[0]);
   } else if (data.id === "go_back") {
-    // Navigate to the parent directory
     const parentPath = currentPath.split("/").slice(0, -1).join("/") || "/";
     setCurrentPath(parentPath);
   }
