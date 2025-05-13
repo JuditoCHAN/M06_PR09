@@ -147,6 +147,26 @@ router.delete("", async (req, res) => {
   });
 });
 
+// Guardar un archivo .txt en el servidor
+router.post('/save-txt', (req, res) => {
+  console.log('[dashboard] Solicitud a /save-txt');
 
+  const { fileName, content } = req.body;
+
+  if (!fileName || !content) {
+    return res.status(400).json({ error: 'Faltan parámetros: fileName o content' });
+  }
+
+  const filePath = path.join('./uploads', `${fileName}.txt`);
+
+  try {
+    fs.writeFileSync(filePath, content, 'utf8');
+    console.log(`[dashboard] Archivo guardado en ${filePath}`);
+    res.json({ success: true, message: 'Archivo guardado correctamente' });
+  } catch (error) {
+    console.error('Error al guardar el archivo:', error);
+    res.status(500).json({ error: 'No se pudo guardar el archivo' });
+  }
+});
 
 export default router;

@@ -87,7 +87,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
   }
 
   return (
-    <div className="container py-4">
+    <div className="container py-4" style={{ height: "90vh" }}>
       <div className="chat-container d-flex flex-column rounded-4 shadow-lg overflow-hidden">
         {/* MENSAJES */}
         <div className="chat-messages flex-grow-1 overflow-auto p-3">
@@ -116,16 +116,6 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
                   msg.sender === nombre ? "user text-end" : "others"
                 }`}
               >
-                {/* <div className="message-text p-3 d-inline-block shadow-sm">
-                  <div className="message-sender mb-1">
-                    <strong>{msg.sender === nombre ? nombre : msg.sender}</strong>
-                  </div>
-                  <div>{msg.text}</div>
-                </div>
-                <div className={`messageHour ${
-                  msg.sender === nombre ? "user" : "others"}`}>
-                    {hora}
-                </div> */}
                 <div className="message-text-wrapper">
                   <div className="message-sender">
                     <strong>{msg.sender === nombre ? nombre : msg.sender}</strong>
