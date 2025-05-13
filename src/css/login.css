@@ -9,7 +9,6 @@ body {
     #f3e8ff var(--tw-gradient-via-position, 50%),
     var(--tw-gradient-to, #c084fc)
   );
-  font-family: 'Segoe UI', sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;

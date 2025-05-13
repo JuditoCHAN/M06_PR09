@@ -308,8 +308,8 @@ const handleAction = (data) => {
         onFileAction={handleAction}
         defaultFileViewActionId={ChonkyActions.EnableListView.id}
         clearSelectionOnOutsideClick={true}
-        disableDragAndDropProvider={true}
-        >
+        // disableDragAndDropProvider={true}
+      >
         <FileNavbar />
         <FileToolbar />
         <FileList />

@@ -1,11 +1,13 @@
 // editor.ts
 import { WebSocketServer, WebSocket } from 'ws';
 import { Server as HTTPServer } from 'http';
+import fs from 'fs';
+import path from 'path';
 
-export function initEditorWebSocket(server: HTTPServer, path: string = '/editor') {
-  const wssEditor = new WebSocketServer({ server, path });
+export function initEditorWebSocket(server: HTTPServer, wsPath: string = '/editor') {
+  const wssEditor = new WebSocketServer({ server, path: wsPath });
   const clients: WebSocket[] = [];
-  const messages: any[] = [];
+  const messages: { fileName: string; content: string; author: string }[] = [];
 
   wssEditor.on('connection', (ws: WebSocket) => {
     clients.push(ws);
@@ -18,7 +20,15 @@ export function initEditorWebSocket(server: HTTPServer, path: string = '/editor'
         const msg = JSON.parse(data.toString());
         messages.push(msg);
         console.log('[Editor] Mensaje recibido:', msg);
-        
+
+        // Guardar el contenido en un archivo .txt
+        if (msg.fileName && msg.content) {
+          const filePath = path.join(__dirname, '../uploads', msg.fileName);
+          fs.writeFileSync(filePath, msg.content, 'utf8');
+          console.log(`[Editor] Archivo guardado en: ${filePath}`);
+        }
+
+        // Enviar el mensaje a los demás clientes
         clients.forEach((client) => {
           if (client !== ws && client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify(msg));
