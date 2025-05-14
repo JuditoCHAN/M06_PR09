@@ -37,7 +37,8 @@ const Editor = ({fileSelector }) => {
         JSON.stringify({
           content: newContent,
           author: clientId.current,
-          fileName: fileName.current, // Enviar el nombre del archivo al servidor
+          fileName: fileName.current, // enviamos el nombre del archivo al servidor
+          date: new Date().toISOString(),
         })
       );
     }
