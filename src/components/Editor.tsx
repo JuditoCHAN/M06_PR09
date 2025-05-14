@@ -30,6 +30,24 @@ const Editor = ({fileSelector }) => {
     };
   }, [content]);
 
+  const prueba = async (id: number) => {
+    try {
+      const response = await fetch(`http://localhost:5001/file?id=${id}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const text = await response.text();
+      setContent(text);
+    } catch (error) {
+      console.error("Error fetching file:", error);
+    }
+  };
+  
+
+  useEffect(() => {
+   prueba(fileSelector);
+
+  },[fileSelector])
   const handleContentChange = (newContent) => {
     //setContent(newContent);
     if (ws.current?.readyState === WebSocket.OPEN) {
