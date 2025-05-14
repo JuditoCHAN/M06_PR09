@@ -1,5 +1,6 @@
 import JoditEditor from 'jodit-react';
 import React, { useState, useEffect, useRef } from 'react';
+import type { IJodit } from 'jodit/esm/types/jodit';
 
 const Editor = ({fileSelector }) => {
   const [content, setContent] = useState('');
@@ -47,7 +48,6 @@ const Editor = ({fileSelector }) => {
     }
   };
   
-
   useEffect(() => {
    prueba(fileSelector);
   },[fileSelector])
@@ -75,6 +75,18 @@ const Editor = ({fileSelector }) => {
       console.log('El editor ha perdido el foco (blur)');
     });
   };
+  const handleEditorRef = (editor: IJodit) => {
+    // Solo se ejecuta una vez cuando el editor se monta
+    editor.events.on('focus', () => {
+      console.log('El editor ha recibido el foco (focus)');
+    });
+
+    editor.events.on('blur', () => {
+      console.log('El editor ha perdido el foco (blur)');
+    });
+  };
+
+
 
   return (
     <div style={{ position: 'relative' }}>
