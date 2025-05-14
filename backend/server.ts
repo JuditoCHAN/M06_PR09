@@ -6,6 +6,7 @@ import { initChatWebSocket } from './routes/chat';
 import { initEditorWebSocket } from './routes/editor'; 
 import dashboard from './routes/dashboard';
 import messageRoutes from './routes/messages';
+import fileRoutes from './routes/file';
 
 const app = express();
 const PORT_CHAT = 5001;
@@ -33,6 +34,8 @@ app.use(express.json());
 app.use('/api', authRoutes);
 app.use('/dashboard', dashboard);
 app.use('/api/messages', messageRoutes);
+app.use('/file', fileRoutes);
+
 
 // Iniciar el servidor para el chat
 serverChat.listen(PORT_CHAT, () => {
