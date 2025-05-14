@@ -69,7 +69,7 @@ const FileManager = ({setFileSelector } ) => {
     if (file.isDir) {
       setCurrentPath(file.id);
     }else{
-      setFileSelector(file.id);
+      setFileSelector(file.subId);
     }
   };
   const handleDelete = (subId:number)=>{

@@ -1,10 +1,10 @@
 import JoditEditor from 'jodit-react';
 import React, { useState, useEffect, useRef } from 'react';
 
-const RealTimeEditor = () => {
+const Editor = ({fileSelector }) => {
   const [content, setContent] = useState('');
   const ws = useRef(null);
-  const clientId = useRef(crypto.randomUUID());
+  const clientId = useRef(fileSelector);
   const fileName = useRef(`${clientId.current}.txt`); // Nombre del archivo basado en el usuario
 
   useEffect(() => {
@@ -58,4 +58,4 @@ const RealTimeEditor = () => {
   );
 };
 
-export default RealTimeEditor;
+export default Editor;

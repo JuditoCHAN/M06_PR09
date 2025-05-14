@@ -15,8 +15,8 @@
         "subId": 1
       },
       {
-        "id": "/config.yml",
-        "name": "config.yml",
+        "id": "/config.txt",
+        "name": "config.txt",
         "isDir": false,
         "size": 890,
         "subId": 2

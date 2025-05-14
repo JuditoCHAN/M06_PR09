@@ -3,6 +3,7 @@ import Login from "../components/Login";
 import { Chat } from "../components/Chat";
 import RealTimeEditor from "../components/Editor";
 import FileManager from "../components/FileManager";
+import Editor from "../components/Editor";
 
 
 const StartPage: React.FC = () => {
@@ -56,7 +57,7 @@ const StartPage: React.FC = () => {
                 <FileManager setFileSelector={setFileSelector} />
               </div>
               <div className="col-6 h-100 overflow-auto">
-                <RealTimeEditor />
+                <Editor fileSelector={fileSelector} />
               </div>
             </>
           ) : (
