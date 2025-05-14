@@ -26,6 +26,42 @@ export function initEditorWebSocket(server: HTTPServer, wsPath: string = '/edito
           const filePath = path.join(__dirname, '../uploads', msg.fileName);
           fs.writeFileSync(filePath, msg.content, 'utf8');
           console.log(`[Editor] Archivo guardado en: ${filePath}`);
+
+          // Guardar datos del mensaje (autor, contenido añadido, hora) en un JSON en la carpeta historial
+          const historialPath = path.join(__dirname, '../historial', msg.fileName.replace('.txt', '.json'));
+          let historialData = [];
+
+          // Leer el archivo existente si ya existe
+          if (fs.existsSync(historialPath)) {
+            try {
+              const existingData = fs.readFileSync(historialPath, 'utf8');
+              historialData = JSON.parse(existingData);
+            } catch (err) {
+              console.error(`[Editor] Error al leer el historial existente: ${err}`);
+            }
+          }
+
+          // Asegurarse de que historialData sea un array
+          if (!Array.isArray(historialData)) {
+            console.warn(`[Editor] El historial existente no es un array. Se inicializará como un array vacío.`);
+            historialData = [];
+          }
+
+          // Agregar el nuevo cambio al historial
+          historialData.push({
+            fileName: msg.fileName,
+            content: msg.content,
+            author: msg.author,
+            date: msg.date,
+          });
+
+          // Guardar el historial actualizado
+          try {
+            fs.writeFileSync(historialPath, JSON.stringify(historialData, null, 2), 'utf8');
+            console.log(`[Editor] Historial actualizado en: ${historialPath}`);
+          } catch (err) {
+            console.error(`[Editor] Error al guardar el historial: ${err}`);
+          }
         }
 
         // Enviar el mensaje a los demás clientes

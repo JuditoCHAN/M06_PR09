@@ -7,6 +7,7 @@ const Editor = ({fileSelector }) => {
   const ws = useRef(null);
   const clientId = useRef(fileSelector);
   const fileName = useRef(`${clientId.current}.txt`); // Nombre del archivo basado en el usuario
+  const [readOnly, setReadOnly] = useState(true);
 
   useEffect(() => {
     ws.current = new WebSocket('ws://localhost:5002/editor');
@@ -20,6 +21,9 @@ const Editor = ({fileSelector }) => {
         const msg = JSON.parse(event.data);
         if (msg.author !== clientId.current && msg.content !== content) {
           setContent(msg.content);
+          setReadOnly(true);
+        } else if(msg.author === clientId.current) {
+          setReadOnly(false);
         }
       } catch (err) {
         console.error('[WebSocket] Error al procesar mensaje:', err);
@@ -46,8 +50,8 @@ const Editor = ({fileSelector }) => {
   
   useEffect(() => {
    prueba(fileSelector);
-
   },[fileSelector])
+
   const handleContentChange = (newContent) => {
     //setContent(newContent);
     if (ws.current?.readyState === WebSocket.OPEN) {
@@ -55,7 +59,8 @@ const Editor = ({fileSelector }) => {
         JSON.stringify({
           content: newContent,
           author: clientId.current,
-          fileName: fileName.current, // Enviar el nombre del archivo al servidor
+          fileName: fileName.current, // enviamos el nombre del archivo al servidor
+          date: new Date().toISOString(),
         })
       );
     }
@@ -74,18 +79,31 @@ const Editor = ({fileSelector }) => {
 
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
+      {readOnly && (
+        <div style={{
+          position: 'absolute',
+          top: 10,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 10,
+          backgroundColor: 'rgba(255, 0, 0, 0.8)',
+          color: 'white',
+          padding: '8px 16px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.2)'
+        }}>
+          Otro usuario está editando el documento...
+        </div>
+      )}
       <JoditEditor
         value={content}
-        config={{ readonly: false, height: 400 }}
+        config={{ readonly: readOnly, height: 400 }}
         onChange={(e) => handleContentChange(e)}
         editorRef={handleEditorRef}
 
 />
-
-
     </div>
-    
   );
 };
 
