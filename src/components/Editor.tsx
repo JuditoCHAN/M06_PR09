@@ -75,16 +75,7 @@ const Editor = ({fileSelector }) => {
       console.log('El editor ha perdido el foco (blur)');
     });
   };
-  const handleEditorRef = (editor: IJodit) => {
-    // Solo se ejecuta una vez cuando el editor se monta
-    editor.events.on('focus', () => {
-      console.log('El editor ha recibido el foco (focus)');
-    });
 
-    editor.events.on('blur', () => {
-      console.log('El editor ha perdido el foco (blur)');
-    });
-  };
 
 
 
