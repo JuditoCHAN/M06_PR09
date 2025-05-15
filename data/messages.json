@@ -82,5 +82,23 @@
     "text": "me quiero mori",
     "date": "2025-05-14T17:26:29.648Z",
     "type": "message"
+  },
+  {
+    "sender": "root",
+    "text": "asd",
+    "date": "2025-05-15T16:06:07.701Z",
+    "type": "message"
+  },
+  {
+    "sender": "profe",
+    "text": "hola",
+    "date": "2025-05-15T16:28:22.607Z",
+    "type": "message"
+  },
+  {
+    "sender": "root",
+    "text": "asdf",
+    "date": "2025-05-15T16:28:25.437Z",
+    "type": "message"
   }
 ]

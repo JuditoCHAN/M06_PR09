@@ -1,19 +1,22 @@
 // editor.ts
 import { WebSocketServer, WebSocket } from 'ws';
 import { Server as HTTPServer } from 'http';
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export function initEditorWebSocket(server: HTTPServer, wsPath: string = '/editor') {
   const wssEditor = new WebSocketServer({ server, path: wsPath });
-  const clients: WebSocket[] = [];
+  const clients: { ws: WebSocket; clientId: string }[] = [];
   const messages: { fileName: string; content: string; author: string }[] = [];
+  let currentEditor: string | null = null;
 
   wssEditor.on('connection', (ws: WebSocket) => {
-    clients.push(ws);
+    const clientId = Math.random().toString(36).substr(2, 9); // Generar un clientId único
+    clients.push({ ws, clientId });
     console.log('[Editor] Cliente conectado en /editor');
 
-    ws.send(JSON.stringify(messages));
+    // Enviar el estado de bloqueo inicial al cliente
+    ws.send(JSON.stringify({ type: 'lock', locked: currentEditor !== null }));
 
     ws.on('message', (data) => {
       try {
@@ -62,23 +65,51 @@ export function initEditorWebSocket(server: HTTPServer, wsPath: string = '/edito
           } catch (err) {
             console.error(`[Editor] Error al guardar el historial: ${err}`);
           }
-        }
 
-        // Enviar el mensaje a los demás clientes
-        clients.forEach((client) => {
-          if (client !== ws && client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify(msg));
+          clients.forEach(({ ws: clientWs }) => {
+            if (clientWs !== ws && clientWs.readyState === WebSocket.OPEN) {
+              clientWs.send(JSON.stringify(msg));
+            }
+          });
+        } else if (msg.fileName && msg.editorFocus !== undefined) {
+          console.log('[Editor] Estan editando el archivo', msg);
+
+          if (msg.editorFocus && currentEditor === null) {
+            currentEditor = msg.author;
+            clients.forEach(({ ws: clientWs }) => {
+              if (clientWs !== ws && clientWs.readyState === WebSocket.OPEN) {
+                clientWs.send(JSON.stringify({ type: 'lock', locked: true, author: msg.author }));
+              }
+            });
+          } else if (!msg.editorFocus && currentEditor === msg.author) {
+            currentEditor = null;
+            clients.forEach(({ ws: clientWs }) => {
+              if (clientWs !== ws && clientWs.readyState === WebSocket.OPEN) {
+                clientWs.send(JSON.stringify({ type: 'lock', locked: false }));
+              }
+            });
           }
-        });
+        }
       } catch (err) {
         console.error('[Editor] Error al procesar mensaje:', err);
       }
     });
 
     ws.on('close', () => {
-      const index = clients.indexOf(ws);
-      if (index !== -1) clients.splice(index, 1);
-      console.log('[Editor] Cliente desconectado de /editor');
+      const clientIndex = clients.findIndex(client => client.ws === ws);
+      if (clientIndex !== -1) {
+        const { clientId } = clients[clientIndex];
+        if (currentEditor === clientId) {
+          currentEditor = null;
+          clients.forEach(({ ws: clientWs }) => {
+            if (clientWs !== ws && clientWs.readyState === WebSocket.OPEN) {
+              clientWs.send(JSON.stringify({ type: 'lock', locked: false }));
+            }
+          });
+        }
+        clients.splice(clientIndex, 1);
+        console.log('[Editor] Cliente desconectado de /editor');
+      }
     });
   });
 
