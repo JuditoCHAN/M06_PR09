@@ -156,35 +156,9 @@ const FileManager = ({ setFileSelector }) => {
     }
   };
 
-  const handleEditFolder = async (folderPath) => {
-    const metadata = prompt("Enter new metadata:");
+  const handleEditFile = async (folderPath) => {
 
-    if (!metadata) return;
-
-    try {
-      const response = await fetch("http://localhost:5001/dashboard/edit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          path: folderPath,
-          metadata,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        alert(`Folder edited with new metadata`);
-        reload();
-      } else {
-        alert(`Error: ${result.error}`);
-      }
-    } catch (error) {
-      console.error("Error editing folder:", error);
-      alert("Error editing folder");
-    }
+    setFileSelector(folderPath)
   };
 
   // Input de archivo oculto para la subida
@@ -259,8 +233,8 @@ const FileManager = ({ setFileSelector }) => {
     // Handle Edit Folder action
     if (data.id === editFiles.id) {
       const selectedFile = data.state.selectedFiles[0];
-      if (selectedFile) {
-        handleEditFolder(selectedFile.id);
+      if (selectedFile && !data.state.selectedFiles[0].isDir) {
+        handleEditFile(selectedFile.subId);
       }
     }
 
