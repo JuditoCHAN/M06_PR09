@@ -10,10 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "bootstrap-icons": "^1.13.1",
     "@aperturerobotics/chonky": "^0.3.1",
     "@aperturerobotics/chonky-icon-fontawesome": "^0.3.1",
     "bootstrap": "^5.3.6",
+    "bootstrap-icons": "^1.13.1",
     "express": "^5.1.0",
     "install": "^0.13.0",
     "jodit-react": "^5.2.19",
@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
+    "@types/node": "^22.15.18",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",

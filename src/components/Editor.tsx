@@ -1,11 +1,18 @@
 import JoditEditor from 'jodit-react';
 import React, { useState, useEffect, useRef } from 'react';
 import type { IJodit } from 'jodit/esm/types/jodit';
+import { Usuario } from '../types/Usuario';
+import { file } from 'jodit/esm/plugins/file/file';
 
-const Editor = ({fileSelector }) => {
+interface EditorProps {
+  fileSelector: any;
+  usuario: Usuario | null;
+}
+
+const Editor: React.FC<EditorProps> = ({ fileSelector, usuario }) => {
   const [content, setContent] = useState('');
   const ws = useRef(null);
-  const clientId = useRef(fileSelector);
+  const clientId = useRef(usuario?.id || fileSelector);
   const fileName = useRef(`${clientId.current}.txt`); // Nombre del archivo basado en el usuario
   const [readOnly, setReadOnly] = useState(true);
 
@@ -65,16 +72,7 @@ const Editor = ({fileSelector }) => {
       );
     }
   };
-  const handleEditorRef = (editor: IJodit) => {
-    // Solo se ejecuta una vez cuando el editor se monta
-    editor.events.on('focus', () => {
-      console.log('El editor ha recibido el foco (focus)');
-    });
 
-    editor.events.on('blur', () => {
-      console.log('El editor ha perdido el foco (blur)');
-    });
-  };
   const handleEditorRef = (editor: IJodit) => {
     // Solo se ejecuta una vez cuando el editor se monta
     editor.events.on('focus', () => {
