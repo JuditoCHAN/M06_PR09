@@ -78,7 +78,6 @@ const Editor: React.FC<EditorProps> = ({ fileSelector, usuario }) => {
     editor.events.on('focus', () => {
       console.log('El editor ha recibido el foco (focus)');
     });
-
     editor.events.on('blur', () => {
       console.log('El editor ha perdido el foco (blur)');
     });

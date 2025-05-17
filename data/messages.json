@@ -124,5 +124,11 @@
     "text": "holaaaaaaaaa!!!!!!!!!!",
     "date": "2025-05-17T11:10:26.810Z",
     "type": "message"
+  },
+  {
+    "sender": "Luis",
+    "text": "asdasd",
+    "date": "2025-05-17T11:13:08.421Z",
+    "type": "message"
   }
 ]
