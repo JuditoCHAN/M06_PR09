@@ -3,14 +3,15 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { Server as HTTPServer} from 'http';
 import fs from 'fs';
 import path from 'path';
+import { MensajeChat } from '../../src/types/MensajeChat';
 
 // Archivo para guardar los mensajes
-const filePath = path.join(__dirname, '../../data/messages.json');
+const filePath = path.join(__dirname, '../historial/chats/messages.json');
 
 export function initChatWebSocket(server: HTTPServer, path: string = '/chat') {
   const wss = new WebSocketServer({ server, path });
   const clients: WebSocket[] = [];
-  const messages: any[] = [];
+  const messages: MensajeChat[] = [];
 
   // Cargar mensajes desde el JSON al iniciar el servidor
   function loadMessagesFromFile() {
@@ -19,7 +20,7 @@ export function initChatWebSocket(server: HTTPServer, path: string = '/chat') {
         const data = fs.readFileSync(filePath, 'utf-8');
         const loadedMessages = JSON.parse(data);
         if (Array.isArray(loadedMessages)) {
-          loadedMessages.forEach((msg: any) => {
+          loadedMessages.forEach((msg: MensajeChat) => {
             messages.push(msg);
           });
         } else {

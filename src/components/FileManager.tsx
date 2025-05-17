@@ -14,7 +14,7 @@ import {
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
-const FileManager = ({ setFileSelector }) => {
+const FileManager = ({ setFileSelector } ) => {
   const [files, setFiles] = useState([]);
   const [folderChain, setFolderChain] = useState([{ 
     id: "/", 

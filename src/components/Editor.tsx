@@ -1,14 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
+import type { IJodit } from 'jodit/esm/types/jodit';
+import { Usuario } from '../types/Usuario';
+import { file } from 'jodit/esm/plugins/file/file';
 
-const Editor = ({ fileSelector }) => {
+interface EditorProps {
+  fileSelector: any;
+  usuario: Usuario | null;
+}
+
+const Editor: React.FC<EditorProps> = ({ fileSelector, usuario }) => {
   const [content, setContent] = useState('');
-  const [isLocked, setIsLocked] = useState(false);
-  const [lockOwner, setLockOwner] = useState('');
-  const ws = useRef<WebSocket | null>(null);
-  const clientId = useRef(Math.random().toString(36).substr(2, 9)); // ID único para este cliente
-  const fileName = useRef(`${fileSelector}.txt`); // Nombre del archivo basado en el selector
+  const ws = useRef(null);
+  const clientId = useRef(usuario?.id || fileSelector);
+  const fileName = useRef(`${clientId.current}.txt`); // Nombre del archivo basado en el usuario
+  const [readOnly, setReadOnly] = useState(true);
 
-  // Conexión al WebSocket
   useEffect(() => {
     ws.current = new WebSocket('ws://localhost:5002/editor');
 
@@ -116,34 +122,17 @@ const Editor = ({ fileSelector }) => {
     }
   };
 
-  // Funciones para manejar el foco
-  const handleFocus = () => {
-    console.log("Focus en editor", fileName.current);
-    if (ws.current?.readyState === WebSocket.OPEN) {
-      ws.current.send(
-        JSON.stringify({
-          editorFocus: true,
-          author: clientId.current,
-          fileName: fileName.current,
-          isLocked: true, // El archivo debe estar bloqueado cuando alguien hace foco
-        })
-      );
-    }
+  const handleEditorRef = (editor: IJodit) => {
+    // Solo se ejecuta una vez cuando el editor se monta
+    editor.events.on('focus', () => {
+      console.log('El editor ha recibido el foco (focus)');
+    });
+    editor.events.on('blur', () => {
+      console.log('El editor ha perdido el foco (blur)');
+    });
   };
 
-  const handleBlur = () => {
-    console.log("Dejado el focus en", fileName.current);
-    if (ws.current?.readyState === WebSocket.OPEN) {
-      ws.current.send(
-        JSON.stringify({
-          editorFocus: false,
-          author: clientId.current,
-          fileName: fileName.current,
-          isLocked: false, // Desbloquear el archivo cuando se pierde el foco
-        })
-      );
-    }
-  };
+
 
   return (
     <div style={{ position: 'relative' }}>

@@ -1,5 +1,6 @@
 export type MensajeChat = {
-  autor: string;
-  contenido: string;
-  timestamp: string;
+  sender: string;
+  text: string;
+  date: string;
+  type: string;
 };
