@@ -1,5 +1,5 @@
 {
-  "id": 9,
+  "id": 10,
   "/": {
     "files": [
       {
@@ -20,6 +20,13 @@
         "isDir": false,
         "size": 890,
         "subId": 2
+      },
+      {
+        "id": "/prueba.txt",
+        "name": "prueba.txt",
+        "isDir": false,
+        "size": 890,
+        "subId": 9
       }
     ]
   },
