@@ -70,6 +70,23 @@ export function initEditorWebSocket(server: HTTPServer, wsPath: string = '/edito
           fs.writeFileSync(filePath, msg.content, 'utf8');
           console.log('[Editor] Archivo guardado:', filePath);
 
+          // Registrar el cambio en el archivo JSON de historial
+          const historyFilePath = path.join(__dirname, '../historial/files', `${fileName.split('.')[0]}.json`);
+          const changeLog = {
+            timestamp: new Date().toISOString(),
+            clientId: msg.author,
+            content: msg.content
+          };
+
+          // Añadir al historial (si el archivo ya existe, lo lee y lo actualiza)
+          if (fs.existsSync(historyFilePath)) {
+            const existingHistory = JSON.parse(fs.readFileSync(historyFilePath, 'utf8'));
+            existingHistory.push(changeLog);
+            fs.writeFileSync(historyFilePath, JSON.stringify(existingHistory, null, 2), 'utf8');
+          } else {
+            fs.writeFileSync(historyFilePath, JSON.stringify([changeLog], null, 2), 'utf8');
+          }
+
           // Enviar el contenido actualizado a todos los clientes de la misma sala, excepto al autor
           room.clients.forEach((client) => {
             if (client.ws !== ws && client.ws.readyState === WebSocket.OPEN) {
