@@ -1,5 +1,5 @@
 {
-  "id": 9,
+  "id": 13,
   "/": {
     "files": [
       {
@@ -20,6 +20,27 @@
         "isDir": false,
         "size": 890,
         "subId": 2
+      },
+      {
+        "id": "/prueba.txt",
+        "name": "prueba.txt",
+        "isDir": false,
+        "size": 890,
+        "subId": 9
+      },
+      {
+        "id": "/sdfg",
+        "name": "sdfg",
+        "isDir": true,
+        "subId": 11
+      },
+      {
+        "id": "/prueba1.txt",
+        "name": "prueba1.txt",
+        "isDir": false,
+        "size": 18,
+        "subId": 13,
+        "fileId": "13"
       }
     ]
   },
@@ -60,5 +81,17 @@
   },
   "/Documentos/prueba": {
     "files": []
+  },
+  "/sdfg": {
+    "files": [
+      {
+        "id": "/sdfg/prueba1.txt",
+        "name": "prueba1.txt",
+        "isDir": false,
+        "size": 18,
+        "subId": 12,
+        "fileId": "3240ad4c-10a8-4018-b345-9e085b9c0347"
+      }
+    ]
   }
 }
