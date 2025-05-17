@@ -57,7 +57,7 @@ const StartPage: React.FC = () => {
                 <FileManager setFileSelector={setFileSelector} />
               </div>
               <div className="col-6 h-100 overflow-auto">
-                <Editor fileSelector={fileSelector} usuario={usuario} />
+                <Editor fileSelector={fileSelector} />
               </div>
             </>
           ) : (

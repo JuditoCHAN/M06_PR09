@@ -3,7 +3,7 @@ import express from 'express';
 import fs from 'fs';
 
 const router = express.Router();
-const data = JSON.parse(fs.readFileSync('../../M06-PR09/data/data.json', 'utf8'));
+const data = JSON.parse(fs.readFileSync('../data/data.json', 'utf8'));
 const usuarios: Usuario[] = data.usuarios || [];
 
 router.post('/login', (req, res) => {
