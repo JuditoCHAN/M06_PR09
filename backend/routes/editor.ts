@@ -1,4 +1,3 @@
-// editor.ts
 import { WebSocketServer, WebSocket } from 'ws';
 import { Server as HTTPServer } from 'http';
 import * as fs from 'fs';
@@ -7,88 +6,54 @@ import * as path from 'path';
 export function initEditorWebSocket(server: HTTPServer, wsPath: string = '/editor') {
   const wssEditor = new WebSocketServer({ server, path: wsPath });
   const clients: { ws: WebSocket; clientId: string }[] = [];
-  const messages: { fileName: string; content: string; author: string }[] = [];
-  let currentEditor: string | null = null;
+  let currentEditor: string | null = null; // El usuario que tiene el foco (bloqueando el archivo)
 
   wssEditor.on('connection', (ws: WebSocket) => {
-    const clientId = Math.random().toString(36).substr(2, 9); // Generar un clientId único
+    const clientId = Math.random().toString(36).substr(2, 9); // Identificador único para cada cliente
     clients.push({ ws, clientId });
-    console.log('[Editor] Cliente conectado en /editor');
+    console.log('[Editor] Cliente conectado en /editor', clientId);
 
-    // Enviar el estado de bloqueo inicial al cliente
+    // Enviar el estado inicial de bloqueo al nuevo cliente
     ws.send(JSON.stringify({ type: 'lock', locked: currentEditor !== null }));
 
     ws.on('message', (data) => {
       try {
         const msg = JSON.parse(data.toString());
-        messages.push(msg);
-        console.log('[Editor] Mensaje recibido:', msg);
 
-        // Guardar el contenido en un archivo .txt
-        if (msg.fileName && msg.content) {
+        // Sincronización del contenido entre clientes
+        if (msg.content) {
           const filePath = path.join(__dirname, '../uploads', msg.fileName);
+
+          // Guardar el contenido en el archivo
           fs.writeFileSync(filePath, msg.content, 'utf8');
-          console.log(`[Editor] Archivo guardado en: ${filePath}`);
+          console.log('[Editor] Archivo guardado:', filePath);
 
-          // Guardar datos del mensaje (autor, contenido añadido, hora) en un JSON en la carpeta historial
-          const historialPath = path.join(__dirname, '../historial', msg.fileName.replace('.txt', '.json'));
-          let historialData = [];
-
-          // Leer el archivo existente si ya existe
-          if (fs.existsSync(historialPath)) {
-            try {
-              const existingData = fs.readFileSync(historialPath, 'utf8');
-              historialData = JSON.parse(existingData);
-            } catch (err) {
-              console.error(`[Editor] Error al leer el historial existente: ${err}`);
-            }
-          }
-
-          // Asegurarse de que historialData sea un array
-          if (!Array.isArray(historialData)) {
-            console.warn(`[Editor] El historial existente no es un array. Se inicializará como un array vacío.`);
-            historialData = [];
-          }
-
-          // Agregar el nuevo cambio al historial
-          historialData.push({
-            fileName: msg.fileName,
-            content: msg.content,
-            author: msg.author,
-            date: msg.date,
-          });
-
-          // Guardar el historial actualizado
-          try {
-            fs.writeFileSync(historialPath, JSON.stringify(historialData, null, 2), 'utf8');
-            console.log(`[Editor] Historial actualizado en: ${historialPath}`);
-          } catch (err) {
-            console.error(`[Editor] Error al guardar el historial: ${err}`);
-          }
-
+          // Enviar el contenido actualizado a todos los clientes, excepto al autor
           clients.forEach(({ ws: clientWs }) => {
             if (clientWs !== ws && clientWs.readyState === WebSocket.OPEN) {
-              clientWs.send(JSON.stringify(msg));
+              clientWs.send(JSON.stringify({ content: msg.content, author: msg.author }));
             }
           });
-        } else if (msg.fileName && msg.editorFocus !== undefined) {
-          console.log('[Editor] Estan editando el archivo', msg);
+        }
 
-          if (msg.editorFocus && currentEditor === null) {
-            currentEditor = msg.author;
+        // Control de bloqueo cuando alguien hace foco en el editor
+        if (msg.editorFocus ) {
+          if (currentEditor === null || currentEditor === msg.author) {
+            currentEditor = msg.author; // Bloquear a todos los demás usuarios
+            // Informar a todos los clientes que el editor está bloqueado
             clients.forEach(({ ws: clientWs }) => {
-              if (clientWs !== ws && clientWs.readyState === WebSocket.OPEN) {
-                clientWs.send(JSON.stringify({ type: 'lock', locked: true, author: msg.author }));
-              }
-            });
-          } else if (!msg.editorFocus && currentEditor === msg.author) {
-            currentEditor = null;
-            clients.forEach(({ ws: clientWs }) => {
-              if (clientWs !== ws && clientWs.readyState === WebSocket.OPEN) {
-                clientWs.send(JSON.stringify({ type: 'lock', locked: false }));
+              if (clientWs.readyState === WebSocket.OPEN) {
+                clientWs.send(JSON.stringify({ type: 'lock', locked: clientWs !== ws }));
               }
             });
           }
+        } else if (!msg.editorFocus && currentEditor === msg.author && !msg.content) {
+          currentEditor = null; // Desbloquear a todos los usuarios
+          clients.forEach(({ ws: clientWs }) => {
+            if (clientWs.readyState === WebSocket.OPEN) {
+              clientWs.send(JSON.stringify({ type: 'lock', locked: false }));
+            }
+          });
         }
       } catch (err) {
         console.error('[Editor] Error al procesar mensaje:', err);
@@ -96,22 +61,22 @@ export function initEditorWebSocket(server: HTTPServer, wsPath: string = '/edito
     });
 
     ws.on('close', () => {
-      const clientIndex = clients.findIndex(client => client.ws === ws);
-      if (clientIndex !== -1) {
-        const { clientId } = clients[clientIndex];
+      const index = clients.findIndex(client => client.ws === ws);
+      if (index !== -1) {
+        const { clientId } = clients[index];
         if (currentEditor === clientId) {
           currentEditor = null;
           clients.forEach(({ ws: clientWs }) => {
-            if (clientWs !== ws && clientWs.readyState === WebSocket.OPEN) {
+            if (clientWs.readyState === WebSocket.OPEN) {
               clientWs.send(JSON.stringify({ type: 'lock', locked: false }));
             }
           });
         }
-        clients.splice(clientIndex, 1);
-        console.log('[Editor] Cliente desconectado de /editor');
+        clients.splice(index, 1);
+        console.log('[Editor] Cliente desconectado', clientId);
       }
     });
   });
 
-  console.log('WebSocket del editor inicializado en /editor');
+  console.log('Servidor WebSocket del editor inicializado en /editor');
 }
