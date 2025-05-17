@@ -46,8 +46,8 @@ Este proyecto incluye un frontend basado en React y un backend con WebSocket. Si
    ```
 
 
-
-
+---
+---
 
 # Visión general
 
@@ -81,7 +81,9 @@ El frontend está construido con **React** y consta de varios componentes princi
 - **Página de Inicio**: Componente central que gestiona la autenticación de usuarios y muestra la interfaz principal de la aplicación.  
 - **Gestor de Archivos**: Proporciona un navegador jerárquico de archivos con operaciones básicas.  
 - **Editor**: Editor de texto con capacidades de edición colaborativa en tiempo real.  
-- **Chat**: Componente de mensajería en tiempo real con historial de mensajes.  
+- **Chat**: Componente de mensajería en tiempo real con historial de mensajes.
+
+![Diagrama del frontend](public/frontend-architecture.png)
 
 ### Servicios del Backend
 
