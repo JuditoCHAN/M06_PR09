@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { setChonkyDefaults } from "@aperturerobotics/chonky";
 import { ChonkyIconFA } from "@aperturerobotics/chonky-icon-fontawesome";
 import {
@@ -14,7 +14,7 @@ import {
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
-const FileManager = ({setFileSelector } ) => {
+const FileManager = ({ setFileSelector }) => {
   const [files, setFiles] = useState([]);
   const [folderChain, setFolderChain] = useState([{ 
     id: "/", 
@@ -24,6 +24,9 @@ const FileManager = ({setFileSelector } ) => {
 
   const [currentPath, setCurrentPath] = useState("/");
   const [trigger, setTrigger] = useState(0);
+  
+  // Referencia al input de archivo
+  const fileInputRef = useRef(null);
 
   const reload = () => setTrigger(prev => prev + 1);
   
@@ -62,24 +65,35 @@ const FileManager = ({setFileSelector } ) => {
     };
 
     loadFiles();
-  }, [currentPath,trigger]);
+  }, [currentPath, trigger]);
 
   // Manejar cambio de directorio
   const handleFileOpen = (file) => {
     if (file.isDir) {
       setCurrentPath(file.id);
-    }else{
+    } else {
       setFileSelector(file.subId);
     }
   };
-  const handleDelete = (subId:number)=>{
-    const response = fetch("http://localhost:5001/dashboard?subId="+subId, {
-      method: "delete",
 
-    }).then();
+  const handleDelete = (subId) => {
+    fetch(`http://localhost:5001/dashboard?subId=${subId}`, {
+      method: "DELETE",
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          reload();
+        } else {
+          alert("Error al eliminar el archivo");
+        }
+      })
+      .catch(error => {
+        console.error("Error al eliminar:", error);
+        alert("Error al eliminar el archivo");
+      });
+  };
 
-    reload();
-  }
   const handleCreateDirectory = async () => {
     const directoryName = prompt("Ingrese el nombre del nuevo directorio:");
     
@@ -110,94 +124,111 @@ const FileManager = ({setFileSelector } ) => {
       alert("Error al crear directorio");
     }
   };
-const handleRenameFolder = async (folderPath) => {
-  const newName = prompt("Enter new folder name:");
 
-  if (!newName) return;
+  const handleRenameFolder = async (folderPath) => {
+    const newName = prompt("Enter new folder name:");
 
-  try {
-    const response = await fetch("http://localhost:5001/dashboard/rename", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        oldPath: folderPath,
-        newName,
-      }),
-    });
+    if (!newName) return;
 
-    const result = await response.json();
+    try {
+      const response = await fetch("http://localhost:5001/dashboard/rename", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          oldPath: folderPath,
+          newName,
+        }),
+      });
 
-    if (response.ok) {
-      alert(`Folder renamed to: ${newName}`);
-      reload();
-    } else {
-      alert(`Error: ${result.error}`);
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(`Folder renamed to: ${newName}`);
+        reload();
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    } catch (error) {
+      console.error("Error renaming folder:", error);
+      alert("Error renaming folder");
     }
-  } catch (error) {
-    console.error("Error renaming folder:", error);
-    alert("Error renaming folder");
-  }
-};
-const handleEditFolder = async (folderPath) => {
-  const metadata = prompt("Enter new metadata:");
+  };
 
-  if (!metadata) return;
+  const handleEditFolder = async (folderPath) => {
+    const metadata = prompt("Enter new metadata:");
 
-  try {
-    const response = await fetch("http://localhost:5001/dashboard/edit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        path: folderPath,
-        metadata,
-      }),
-    });
+    if (!metadata) return;
 
-    const result = await response.json();
+    try {
+      const response = await fetch("http://localhost:5001/dashboard/edit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          path: folderPath,
+          metadata,
+        }),
+      });
 
-    if (response.ok) {
-      alert(`Folder edited with new metadata`);
-      reload();
-    } else {
-      alert(`Error: ${result.error}`);
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(`Folder edited with new metadata`);
+        reload();
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    } catch (error) {
+      console.error("Error editing folder:", error);
+      alert("Error editing folder");
     }
-  } catch (error) {
-    console.error("Error editing folder:", error);
-    alert("Error editing folder");
-  }
-};
-const handleUploadFile = async (folderPath) => {
-  const formData = new FormData();
-  const file = document.getElementById("fileInput").files[0]; // Assuming you have an <input id="fileInput" />
+  };
 
-  if (!file) return;
-
-  formData.append("file", file);
-  formData.append("path", folderPath);
-
-  try {
-    const response = await fetch("http://localhost:5001/dashboard/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      alert(`File uploaded: ${file.name}`);
-      reload();
-    } else {
-      alert(`Error: ${result.error}`);
+  // Input de archivo oculto para la subida
+  const triggerFileInput = (folderPath) => {
+    // Guardar la ruta de destino como atributo en el input
+    if (fileInputRef.current) {
+      fileInputRef.current.setAttribute('data-upload-path', folderPath);
+      fileInputRef.current.click();
     }
-  } catch (error) {
-    console.error("Error uploading file:", error);
-    alert("Error uploading file");
-  }
-};
+  };
+
+  const handleFileInputChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Obtener la ruta de destino del atributo personalizado
+    const uploadPath = fileInputRef.current.getAttribute('data-upload-path') || currentPath;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("path", uploadPath);
+
+    try {
+      const response = await fetch("http://localhost:5001/dashboard/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(`Archivo subido: ${file.name}`);
+        reload();
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    } catch (error) {
+      console.error("Error al subir archivo:", error);
+      alert("Error al subir archivo");
+    }
+
+    // Limpiar el input para permitir seleccionar el mismo archivo de nuevo
+    event.target.value = null;
+  };
 
   // Acción personalizada para navegar hacia atrás
   const goBack = defineFileAction({
@@ -209,62 +240,69 @@ const handleUploadFile = async (folderPath) => {
     },
   });
 
-const handleAction = (data) => {
-  if (data.id === createNewFolder.id) {
-    handleCreateDirectory();
-  }
+  // Acción para subir archivos
+  const uploadFiles = defineFileAction({
+    id: "upload_files",
+    button: {
+      name: "Subir Archivo",
+      toolbar: true,
+      contextMenu: true,
+      icon: ChonkyIconName.upload,
+    },
+  });
 
-  // Handle Edit Folder action
-  if (data.id === editFiles.id) {
-    const selectedFile = data.state.selectedFiles[0];
-    if (selectedFile) {
-      handleEditFolder(selectedFile.id);  
+  const handleAction = (data) => {
+    if (data.id === createNewFolder.id) {
+      handleCreateDirectory();
     }
-  }
 
-  // Handle Rename Folder action
-  if (data.id === renameFiles.id) {
-    const selectedFile = data.state.selectedFiles[0]; 
-    if (selectedFile) {
-      handleRenameFolder(selectedFile.id); 
+    // Handle Edit Folder action
+    if (data.id === editFiles.id) {
+      const selectedFile = data.state.selectedFiles[0];
+      if (selectedFile) {
+        handleEditFolder(selectedFile.id);
+      }
     }
-  }
 
-  // Handle Upload Files action
-  if (data.id === ChonkyActions.UploadFiles.id) {
-    const selectedFile = data.state.selectedFiles[0]; 
-    if (selectedFile && selectedFile.isDir) {
-      handleUploadFile(selectedFile.id); 
+    // Handle Rename Folder action
+    if (data.id === renameFiles.id) {
+      const selectedFile = data.state.selectedFiles[0];
+      if (selectedFile) {
+        handleRenameFolder(selectedFile.id);
+      }
     }
-  }
 
-  // Handle Download Files action
-  if (data.id === ChonkyActions.DownloadFiles.id) {
-    alert("Download Folder Action");
-  }
+    // Handle custom Upload Files action
+    if (data.id === uploadFiles.id) {
+      // Si hay un directorio seleccionado, subir al directorio seleccionado
+      if (data.state.selectedFiles.length > 0 && data.state.selectedFiles[0].isDir) {
+        triggerFileInput(data.state.selectedFiles[0].id);
+      } else {
+        // Si no hay selección o no es un directorio, subir al directorio actual
+        triggerFileInput(currentPath);
+      }
+    }
 
-  // Handle Delete Files action
-  if (data.id === ChonkyActions.DeleteFiles.id) {
-    data.state.selectedFiles.forEach((element) => {
-      handleDelete(element.subId);
-    });
-  }
+    // Handle Delete Files action
+    if (data.id === ChonkyActions.DeleteFiles.id) {
+      data.state.selectedFiles.forEach((element) => {
+        handleDelete(element.subId);
+      });
+    }
 
-  // Handle file open action
-  if (data.id === ChonkyActions.OpenFiles.id) {
-    handleFileOpen(data.payload.files[0]);
-  } else if (data.id === "go_back") {
-    const parentPath = currentPath.split("/").slice(0, -1).join("/") || "/";
-    setCurrentPath(parentPath);
-  }
+    // Handle file open action
+    if (data.id === ChonkyActions.OpenFiles.id) {
+      handleFileOpen(data.payload.files[0]);
+    } else if (data.id === "go_back") {
+      const parentPath = currentPath.split("/").slice(0, -1).join("/") || "/";
+      setCurrentPath(parentPath);
+    }
+  };
 
-};
-
-  
   const createNewFolder = defineFileAction({
     id: "create_files",
     button: {
-      name: "Create Folder",
+      name: "Crear Carpeta",
       toolbar: true,
       contextMenu: true,
       icon: ChonkyIconName.folderCreate
@@ -274,7 +312,7 @@ const handleAction = (data) => {
   const editFiles = defineFileAction({
     id: "edit_files",
     button: {
-      name: "Edit",
+      name: "Editar",
       toolbar: true,
       contextMenu: true,
       icon: ChonkyIconName.archive
@@ -284,7 +322,7 @@ const handleAction = (data) => {
   const renameFiles = defineFileAction({
     id: "rename_files",
     button: {
-      name: "Rename",
+      name: "Renombrar",
       toolbar: true,
       contextMenu: true,
       icon: ChonkyIconName.code
@@ -295,12 +333,21 @@ const handleAction = (data) => {
     createNewFolder,
     editFiles,
     renameFiles,
-    ChonkyActions.UploadFiles,
-    ChonkyActions.DownloadFiles,
-    ChonkyActions.DeleteFiles
+    uploadFiles,
+    ChonkyActions.DeleteFiles,
+    goBack
   ];
+
   return (
     <div style={{ height: "90vh" }}>
+      {/* Input de archivo oculto */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={handleFileInputChange}
+      />
+      
       <FileBrowser
         files={files}
         folderChain={folderChain}
@@ -308,7 +355,6 @@ const handleAction = (data) => {
         onFileAction={handleAction}
         defaultFileViewActionId={ChonkyActions.EnableListView.id}
         clearSelectionOnOutsideClick={true}
-        // disableDragAndDropProvider={true}
       >
         <FileNavbar />
         <FileToolbar />
