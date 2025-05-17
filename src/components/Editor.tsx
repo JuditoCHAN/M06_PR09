@@ -150,7 +150,6 @@ const Editor = ({ fileSelector }) => {
       <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>
         Editando: {fileName.current}
       </div>
-      
       {isLocked && (
         <div
           style={{
@@ -182,6 +181,25 @@ const Editor = ({ fileSelector }) => {
           border: isLocked ? '2px solid red' : '2px solid green',
         }}
       />
+      <button
+        onClick={() => {
+          // Descarga el archivo actual desde la carpeta uploads
+          const url = `http://localhost:5001/file/download?id=${fileSelector}`;
+          window.open(url, '_blank');
+        }}
+        style={{
+          marginBottom: '10px',
+          padding: '8px 16px',
+          backgroundColor: '#007bff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '6px',
+          cursor: 'pointer',
+          fontWeight: 'bold',
+        }}
+      >
+        Descargar documento
+      </button>
     </div>
   );
 };
