@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../css/chat.css";
+import { MensajeChat } from "../types/MensajeChat";
 
 interface ChatProps {
   username: string;
@@ -9,9 +10,9 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
   const [mensaje, setMensaje] = useState("");
   const [nombre] = useState(username);
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<MensajeChat[]>([]);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const [historial, setHistorial] = useState<any[]>([]);
+  const [historial, setHistorial] = useState<MensajeChat[]>([]);
   const [showModal, setShowModal] = useState(false);
 
   const handleVerHistorial = async () => {
@@ -35,7 +36,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
         const data = JSON.parse(event.data);
         if(Array.isArray(data)){
           // historial de mensajes
-          data.map((msg: any) => {
+          data.map((msg: MensajeChat) => {
             setMessages((prevMessages) => [
               ...prevMessages,
               { sender: msg.sender, text: msg.text, date: msg.date, type: msg.type },

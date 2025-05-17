@@ -1,0 +1,26 @@
+[
+  {
+    "sender": "Ana",
+    "text": "uy no hay nadie",
+    "date": "2025-05-17T13:44:26.828Z",
+    "type": "message"
+  },
+  {
+    "sender": "Luis",
+    "text": "hola ana",
+    "date": "2025-05-17T13:44:51.274Z",
+    "type": "message"
+  },
+  {
+    "sender": "Ana",
+    "text": "PERO LUIS AMIGO",
+    "date": "2025-05-17T13:47:20.951Z",
+    "type": "message"
+  },
+  {
+    "sender": "Luis",
+    "text": "ayyy qué pasó",
+    "date": "2025-05-17T13:47:44.394Z",
+    "type": "message"
+  }
+]
