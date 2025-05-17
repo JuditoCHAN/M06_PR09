@@ -37,13 +37,13 @@ export function initEditorWebSocket(server: HTTPServer, wsPath: string = '/edito
           if (currentClient.fileName) {
             removeClientFromRoom(currentClient);
           }
-          
+
           // Actualizar el nombre de archivo del cliente
           currentClient.fileName = fileName;
-          
+
           // Añadir cliente a la nueva sala
           addClientToRoom(currentClient, fileName);
-          
+
           // Enviar estado inicial de bloqueo al cliente
           const room = fileRooms.get(fileName);
           if (room) {
@@ -70,22 +70,8 @@ export function initEditorWebSocket(server: HTTPServer, wsPath: string = '/edito
           fs.writeFileSync(filePath, msg.content, 'utf8');
           console.log('[Editor] Archivo guardado:', filePath);
 
-          // Registrar el cambio en el archivo JSON de historial
-          const historyFilePath = path.join(__dirname, '../historial/files', `${fileName.split('.')[0]}.json`);
-          const changeLog = {
-            timestamp: new Date().toISOString(),
-            clientId: msg.author,
-            content: msg.content
-          };
-
-          // Añadir al historial (si el archivo ya existe, lo lee y lo actualiza)
-          if (fs.existsSync(historyFilePath)) {
-            const existingHistory = JSON.parse(fs.readFileSync(historyFilePath, 'utf8'));
-            existingHistory.push(changeLog);
-            fs.writeFileSync(historyFilePath, JSON.stringify(existingHistory, null, 2), 'utf8');
-          } else {
-            fs.writeFileSync(historyFilePath, JSON.stringify([changeLog], null, 2), 'utf8');
-          }
+          // Registrar el cambio en el archivo de historial (NO afecta a la lógica de bloqueo)
+          saveChangeHistory(fileName, msg.author, msg.content);
 
           // Enviar el contenido actualizado a todos los clientes de la misma sala, excepto al autor
           room.clients.forEach((client) => {
@@ -147,7 +133,7 @@ export function initEditorWebSocket(server: HTTPServer, wsPath: string = '/edito
         currentEditor: null
       });
     }
-    
+
     const room = fileRooms.get(fileName)!;
     room.clients.push(client);
     console.log(`[Editor] Cliente ${client.clientId} añadido a la sala ${fileName}`);
@@ -161,11 +147,11 @@ export function initEditorWebSocket(server: HTTPServer, wsPath: string = '/edito
 
     const room = fileRooms.get(client.fileName)!;
     const index = room.clients.findIndex(c => c.clientId === client.clientId);
-    
+
     if (index !== -1) {
       room.clients.splice(index, 1);
       console.log(`[Editor] Cliente ${client.clientId} eliminado de la sala ${client.fileName}`);
-      
+
       // Si este cliente era el editor actual, liberar el bloqueo
       if (room.currentEditor === client.clientId) {
         room.currentEditor = null;
@@ -175,12 +161,32 @@ export function initEditorWebSocket(server: HTTPServer, wsPath: string = '/edito
           }
         });
       }
-      
+
       // Si la sala queda vacía, eliminarla
       if (room.clients.length === 0) {
         fileRooms.delete(client.fileName);
         console.log(`[Editor] Sala ${client.fileName} eliminada`);
       }
+    }
+  }
+
+  // Función para guardar el historial de cambios en un archivo
+  function saveChangeHistory(fileName: string, author: string, content: string) {
+    const historyFilePath = path.join(__dirname, '../historial/files', `${fileName.split('.')[0]}.json`);
+    const changeLog = {
+      timestamp: new Date().toISOString(),
+      clientId: author,
+      content: content
+    };
+
+    // Si el archivo de historial ya existe, lo leemos y agregamos el nuevo cambio
+    if (fs.existsSync(historyFilePath)) {
+      const existingHistory = JSON.parse(fs.readFileSync(historyFilePath, 'utf8'));
+      existingHistory.push(changeLog);
+      fs.writeFileSync(historyFilePath, JSON.stringify(existingHistory, null, 2), 'utf8');
+    } else {
+      // Si el archivo no existe, lo creamos con el primer cambio
+      fs.writeFileSync(historyFilePath, JSON.stringify([changeLog], null, 2), 'utf8');
     }
   }
 
