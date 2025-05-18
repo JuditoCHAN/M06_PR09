@@ -1,3 +1,17 @@
+// dashboard.ts
+// Rutas para la gestión de archivos y carpetas (dashboard tipo explorador)
+//
+// Endpoints principales:
+//   - GET /tree: Devuelve el árbol de directorios y archivos
+//   - POST /directory: Crea un nuevo directorio
+//   - POST /rename: Renombra un directorio
+//   - POST /edit: Edita los metadatos de un directorio
+//   - DELETE /: Elimina un archivo o directorio
+//
+// Funcionalidad principal:
+//   - Lee y escribe el árbol de archivos en uploads/fileTree.json
+//   - Permite crear, renombrar, eliminar y editar carpetas y archivos
+
 import express, { Request, Response } from "express";
 import path from "path";
 import fs from "fs";

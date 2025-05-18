@@ -1,3 +1,14 @@
+// file.ts
+// Rutas para la gestión y descarga de archivos individuales
+//
+// Endpoints principales:
+//   - GET /file?id=...: Devuelve el contenido de un archivo .txt por id
+//   - GET /file/download?id=...: Descarga el archivo .txt como descarga forzada
+//
+// Funcionalidad principal:
+//   - Lee archivos de la carpeta /uploads
+//   - Permite descargar archivos de forma segura evitando path traversal
+
 import express from 'express';
 import path from 'path';
 import fs from 'fs';

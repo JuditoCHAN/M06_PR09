@@ -2,6 +2,24 @@ import React, { useState } from "react";
 import "../css/login.css";
 import type { Usuario } from "../types/Usuario";
 
+// Login.tsx
+// Componente de formulario de inicio de sesión
+//
+// Props:
+//   - onLoginSuccess: función callback que recibe el objeto usuario tras login exitoso
+//
+// Funcionalidad principal:
+//   - Permite al usuario iniciar sesión introduciendo nombre y email
+//   - Envía los datos al backend y recibe el objeto usuario
+//   - Muestra errores si las credenciales no son válidas
+//
+// Principales funciones internas:
+//   - handleLogin: Envía los datos al backend y gestiona la respuesta
+//
+// Renderiza:
+//   - Formulario de login
+//   - Mensaje de error si las credenciales no son válidas
+
 interface LoginProps {
   onLoginSuccess: (usuario: Usuario) => void;
 }

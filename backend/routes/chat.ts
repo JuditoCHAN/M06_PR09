@@ -1,4 +1,19 @@
 // chat.ts
+// Rutas y lógica para el WebSocket de chat y gestión de mensajes
+//
+// Funcionalidad principal:
+//   - Inicializa el WebSocket para el chat
+//   - Gestiona la conexión y desconexión de clientes
+//   - Envía y recibe mensajes de chat y notificaciones
+//   - Guarda el historial de mensajes en un archivo JSON
+//
+// Funciones internas:
+//   - loadMessagesFromFile: Carga mensajes desde el archivo JSON al iniciar
+//   - saveMessagesToFile: Guarda los mensajes en el archivo JSON
+//
+// Exporta:
+//   - initChatWebSocket: función para inicializar el WebSocket del chat
+
 import { WebSocketServer, WebSocket } from 'ws';
 import { Server as HTTPServer} from 'http';
 import fs from 'fs';

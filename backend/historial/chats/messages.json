@@ -34,5 +34,17 @@
     "text": "hey",
     "date": "2025-05-17T18:29:57.351Z",
     "type": "message"
+  },
+  {
+    "sender": "Profesor",
+    "text": "The teacher is here!",
+    "date": "2025-05-17T23:49:17.842Z",
+    "type": "message"
+  },
+  {
+    "sender": "Ana",
+    "text": "aaaa",
+    "date": "2025-05-18T00:07:10.632Z",
+    "type": "message"
   }
 ]

@@ -2,6 +2,35 @@ import React, { useState, useEffect, useRef } from "react";
 import "../css/chat.css";
 import { MensajeChat } from "../types/MensajeChat";
 
+// Chat.tsx
+// Componente de chat en tiempo real con WebSocket y visualización de historial
+//
+// Props:
+//   - username: string - nombre del usuario actual
+//
+// Funcionalidad principal:
+//   - Conecta a un WebSocket para recibir y enviar mensajes de chat
+//   - Muestra mensajes en tiempo real y notificaciones
+//   - Permite visualizar y exportar el historial de mensajes
+//   - Permite borrar el chat localmente
+//
+// Principales funciones internas:
+//   - handleVerHistorial: Obtiene el historial de mensajes del backend y lo muestra en un modal
+//   - handleSubmit: Envía un mensaje al WebSocket y lo añade al estado local
+//   - handleChangeMensaje: Actualiza el estado del input de mensaje
+//   - exportChats: Descarga el historial de mensajes como archivo
+//   - borrarChats: Limpia los mensajes del estado local
+//
+// Efectos:
+//   - useEffect para conectar/desconectar el WebSocket y recibir mensajes
+//   - useEffect para hacer scroll automático al último mensaje
+//
+// Renderiza:
+//   - Lista de mensajes
+//   - Input para enviar mensajes
+//   - Botones para exportar, ver historial y borrar chats
+//   - Modal para mostrar el historial completo
+
 interface ChatProps {
   username: string;
 }

@@ -1,3 +1,19 @@
+// editor.ts
+// Rutas y lógica para el WebSocket de edición colaborativa de archivos
+//
+// Funcionalidad principal:
+//   - Inicializa el WebSocket para el editor
+//   - Gestiona la conexión y desconexión de clientes
+//   - Sincroniza el contenido de archivos de texto en tiempo real
+//   - Guarda los cambios en archivos .txt y el historial en JSON
+//
+// Funciones internas:
+//   - Guardar y cargar archivos .txt en /uploads
+//   - Guardar historial de cambios en /historial
+//
+// Exporta:
+//   - initEditorWebSocket: función para inicializar el WebSocket del editor
+
 import { WebSocketServer, WebSocket } from 'ws';
 import { Server as HTTPServer } from 'http';
 import * as fs from 'fs';

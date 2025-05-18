@@ -14,6 +14,35 @@ import {
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
+// FileManager.tsx
+// Componente de gestión de archivos y carpetas con interfaz tipo explorador
+//
+// Props:
+//   - setFileSelector: función para seleccionar el archivo a editar
+//
+// Funcionalidad principal:
+//   - Muestra archivos y carpetas usando la librería Chonky
+//   - Permite navegar por carpetas, crear, renombrar y eliminar directorios
+//   - Permite subir archivos y seleccionar archivos para editar
+//   - Sincroniza la estructura de archivos con el backend
+//
+// Principales funciones internas:
+//   - loadFiles: Carga los archivos y carpetas del backend según la ruta actual
+//   - handleFileOpen: Navega a una carpeta o selecciona un archivo para editar
+//   - handleDelete: Elimina archivos o carpetas
+//   - handleCreateDirectory: Crea un nuevo directorio
+//   - handleRenameFolder: Renombra un directorio
+//   - handleEditFile: Selecciona un archivo para editar
+//   - handleFileInputChange: Sube un archivo al backend
+//   - handleAction: Gestiona las acciones personalizadas de Chonky
+//
+// Efectos:
+//   - useEffect para cargar archivos al cambiar de carpeta o tras una acción
+//
+// Renderiza:
+//   - Explorador de archivos con acciones personalizadas (crear, renombrar, eliminar, subir, editar)
+//   - Input oculto para subir archivos
+
 const FileManager = ({ setFileSelector } ) => {
   const [files, setFiles] = useState([]);
   const [folderChain, setFolderChain] = useState([{ 

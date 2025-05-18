@@ -1,3 +1,22 @@
+// StartPage.tsx
+// Página principal de la aplicación
+//
+// Funcionalidad principal:
+//   - Gestiona el estado de login y usuario
+//   - Muestra el dashboard principal con FileManager, Editor y Chat si el usuario está logueado
+//   - Muestra el formulario de login si el usuario no está logueado
+//
+// Principales funciones internas:
+//   - handleLoginSuccess: Guarda el usuario en sessionStorage y actualiza el estado
+//
+// Efectos:
+//   - useEffect para recuperar el usuario y estado de login de sessionStorage al cargar la página
+//
+// Renderiza:
+//   - Navbar con saludo y botón de cerrar sesión
+//   - FileManager, Editor y Chat si el usuario está logueado
+//   - Login si el usuario no está logueado
+
 import React, { useEffect, useState } from "react";
 import Login from "../components/Login";
 import { Chat } from "../components/Chat";

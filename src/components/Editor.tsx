@@ -1,5 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+// Editor.tsx
+// Componente de editor colaborativo en tiempo real con WebSocket
+//
+// Props:
+//   - fileSelector: id del archivo a editar (string o number)
+//   - usuario (opcional): objeto usuario con id, nombre y email
+//
+// Funcionalidad principal:
+//   - Permite editar un archivo de texto de forma colaborativa
+//   - Sincroniza el contenido con otros usuarios mediante WebSocket
+//   - Bloquea el editor si otro usuario está editando el mismo archivo
+//   - Permite descargar el archivo actual como .txt
+//
+// Principales funciones internas:
+//   - handleContentChange: Envía el nuevo contenido al backend y actualiza el estado
+//   - handleFocus: Notifica al backend que el usuario está editando (bloqueo)
+//   - handleBlur: Notifica al backend que el usuario deja de editar (desbloqueo)
+//   - loadFileContent: Carga el contenido del archivo seleccionado desde el backend
+//
+// Efectos:
+//   - useEffect para conectar/desconectar el WebSocket y recibir mensajes de bloqueo/contenido
+//   - useEffect para actualizar el archivo cuando cambia fileSelector
+//
+// Renderiza:
+//   - Área de texto editable (o bloqueada)
+//   - Botón para descargar el documento actual
+//   - Aviso visual si el documento está siendo editado por otro usuario
+
 const Editor = ({ fileSelector }) => {
   const [content, setContent] = useState('');
   const [isLocked, setIsLocked] = useState(false);
