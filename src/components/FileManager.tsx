@@ -11,6 +11,7 @@ import {
   ChonkyActions,
   defineFileAction,
 } from "@aperturerobotics/chonky";
+import '../css/dashboard.css';
 
 setChonkyDefaults({ iconComponent: ChonkyIconFA });
 
@@ -247,7 +248,7 @@ const FileManager = ({ setFileSelector } ) => {
   const uploadFiles = defineFileAction({
     id: "upload_files",
     button: {
-      name: "Subir Archivo",
+      name: "Subir archivo",
       toolbar: true,
       contextMenu: true,
       icon: ChonkyIconName.upload,
@@ -305,7 +306,7 @@ const FileManager = ({ setFileSelector } ) => {
   const createNewFolder = defineFileAction({
     id: "create_files",
     button: {
-      name: "Crear Carpeta",
+      name: "Crear carpeta",
       toolbar: true,
       contextMenu: true,
       icon: ChonkyIconName.folderCreate
@@ -342,7 +343,7 @@ const FileManager = ({ setFileSelector } ) => {
   ];
 
   return (
-    <div style={{ height: "90vh" }}>
+    <div className="file-manager-root" style={{ height: "90vh" }}>
       {/* Input de archivo oculto */}
       <input
         type="file"

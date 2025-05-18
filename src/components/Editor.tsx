@@ -173,11 +173,25 @@ const Editor = ({ fileSelector }) => {
     }
   };
 
+  // Función para descargar como TXT
+  const handleDownloadTxt = () => {
+    const url = `http://localhost:5001/file/download?id=${fileSelector}&format=txt`;
+    window.open(url, '_blank');
+  };
+
+  // Función para descargar como PDF
+  const handleDownloadPdf = () => {
+    const url = `http://localhost:5001/file/download?id=${fileSelector}&format=pdf`;
+    window.open(url, '_blank');
+  };
+
+
   return (
     <div style={{ position: 'relative' }}>
       <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>
         Editando: {fileName.current}
       </div>
+
       {isLocked && (
         <div
           style={{
@@ -196,6 +210,7 @@ const Editor = ({ fileSelector }) => {
           El documento está siendo editado por otro usuario.
         </div>
       )}
+
       <textarea
         value={content}
         onChange={(e) => handleContentChange(e.target.value)}
@@ -205,29 +220,38 @@ const Editor = ({ fileSelector }) => {
         style={{ 
           width: '100%', 
           height: '400px', 
-          fontFamily: 'Arial, sans-serif',
+          fontFamily: 'Rubik, sans-serif',
           border: isLocked ? '2px solid red' : '2px solid green',
+          borderRadius: '8px',
         }}
       />
-      <button
-        onClick={() => {
-          // Descarga el archivo actual desde la carpeta uploads
-          const url = `http://localhost:5001/file/download?id=${fileSelector}`;
-          window.open(url, '_blank');
-        }}
-        style={{
-          marginBottom: '10px',
-          padding: '8px 16px',
-          backgroundColor: '#007bff',
-          color: 'white',
-          border: 'none',
-          borderRadius: '6px',
-          cursor: 'pointer',
-          fontWeight: 'bold',
-        }}
-      >
-        Descargar documento
-      </button>
+
+      <div className="btn-group mt-3">
+        <button
+          type="button"
+          className="btn btn-primary dropdown-toggle"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i className="bi bi-file-earmark-arrow-down me-2"></i>
+          <span className="me-2">Descargar documento</span>
+        </button>
+        <ul className="dropdown-menu">
+          <li>
+            <button className="dropdown-item" onClick={handleDownloadTxt}>
+              <i className="bi bi-filetype-txt me-2"></i>
+              Descargar en .txt
+            </button>
+          </li>
+          <li>
+            <button className="dropdown-item" onClick={handleDownloadPdf}>
+              <i className="bi bi-filetype-pdf me-2"></i>
+              Descargar en .pdf
+            </button>
+          </li>
+        </ul>
+      </div>
+
     </div>
   );
 };
