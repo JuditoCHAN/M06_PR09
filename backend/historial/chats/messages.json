@@ -52,5 +52,29 @@
     "text": "volví",
     "date": "2025-05-18T16:36:33.620Z",
     "type": "message"
+  },
+  {
+    "sender": "Luis",
+    "text": "muy buenas",
+    "date": "2025-05-18T21:13:22.806Z",
+    "type": "message"
+  },
+  {
+    "sender": "Ana",
+    "text": "tengo hambre quiero cenar algo rico",
+    "date": "2025-05-18T21:13:37.482Z",
+    "type": "message"
+  },
+  {
+    "sender": "Luis",
+    "text": "yo cené verdura que asco",
+    "date": "2025-05-18T21:13:46.491Z",
+    "type": "message"
+  },
+  {
+    "sender": "Ana",
+    "text": "k tristesa",
+    "date": "2025-05-18T21:14:20.902Z",
+    "type": "message"
   }
 ]
