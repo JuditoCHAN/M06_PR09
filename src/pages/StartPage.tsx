@@ -20,7 +20,6 @@
 import React, { useEffect, useState } from "react";
 import Login from "../components/Login";
 import { Chat } from "../components/Chat";
-import RealTimeEditor from "../components/Editor";
 import FileManager from "../components/FileManager";
 import Editor from "../components/Editor";
 import type { Usuario } from "../types/Usuario";
@@ -65,6 +64,7 @@ const StartPage: React.FC = () => {
               }}
             >
               Cerrar sesión
+              <i className="bi bi-box-arrow-right ms-2"></i>
             </button>
           </nav>
 

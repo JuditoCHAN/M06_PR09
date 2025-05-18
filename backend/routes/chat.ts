@@ -78,14 +78,32 @@ export function initChatWebSocket(server: HTTPServer, path: string = '/chat') {
     ws.on('message', (data) => {
       try {
         const msg = JSON.parse(data.toString());
-        console.log('[Chat] Mensaje recibido:', msg);
-        messages.push(msg);
-        saveMessagesToFile();
-        clients.forEach((client) => {
-          if (client !== ws && client.readyState === WebSocket.OPEN) { // enviar mensaje a los demás clientes
-            client.send(JSON.stringify(msg));
-          }
-        });
+        if (msg.type === 'typing') {
+          // notificación a los demás clientes de que un usuario está escribiendo
+          // no se guarda en el historial
+          clients.forEach((client) => {
+            if (client !== ws && client.readyState === WebSocket.OPEN) {
+              client.send(JSON.stringify(msg));
+            }
+          });
+        } else if (msg.type === 'message') {
+          // Solo se guardan los mensajes de chat reales (tipos 'message')
+          console.log('[Chat] Mensaje recibido:', msg);
+          messages.push(msg);
+          saveMessagesToFile();
+          clients.forEach((client) => {
+            if (client !== ws && client.readyState === WebSocket.OPEN) { // enviar mensaje a los demás clientes
+              client.send(JSON.stringify(msg));
+            }
+          });
+        } else {
+          // Otros tipos (notificación, etc.) solo reenviar, no guardar
+          clients.forEach((client) => {
+            if (client !== ws && client.readyState === WebSocket.OPEN) {
+              client.send(JSON.stringify(msg));
+            }
+          });
+        }
       } catch (err) {
         console.error('[Chat] Error al procesar mensaje:', err);
       }

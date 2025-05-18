@@ -37,12 +37,12 @@ interface ChatProps {
 
 export const Chat: React.FC<ChatProps> = ({ username }) => {
   const [mensaje, setMensaje] = useState("");
-  const [nombre] = useState(username);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [messages, setMessages] = useState<MensajeChat[]>([]);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const [historial, setHistorial] = useState<MensajeChat[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [usuarioEscribiendo, setUsuarioEscribiendo] = useState<string | null>(null);
 
   const handleVerHistorial = async () => {
     try {
@@ -72,11 +72,20 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
             ]);
           })
         }else{
-          // mensaje individual
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            { sender: data.sender, text: data.text, date: data.date, type: data.type },
-          ]);
+          if (data.type === 'typing' && data.sender !== username) { // otro usuario escribiendo
+            setUsuarioEscribiendo(data.sender);
+            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+            // limpiar luego de unos segundos
+            setTimeout(() => {
+              setUsuarioEscribiendo(null);
+            }, 4000);
+          } else if (data.type !== 'typing') {
+            // mensaje individual o notificación (NO agregar typing)
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              { sender: data.sender, text: data.text, date: data.date, type: data.type },
+            ]);
+          }
         }
       } catch (error) {
         console.error("Error al parsear el mensaje recibido:", error);
@@ -86,7 +95,7 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
     return () => {
       ws.close();
     };
-  }, []);
+  }, [username]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -96,16 +105,23 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); //que no recarge la pagina
     const date = new Date();
-    socket?.send(JSON.stringify({ sender: nombre, text: mensaje, date: date.toISOString(), type: 'message' }));
+    socket?.send(JSON.stringify({ sender: username, text: mensaje, date: date.toISOString(), type: 'message' }));
     setMessages((prevMessages) => [
       ...prevMessages,
-      { sender: nombre, text: mensaje, date: date.toISOString(), type: 'message' },
+      { sender: username, text: mensaje, date: date.toISOString(), type: 'message' },
     ]);
     setMensaje("");
   };
 
   const handleChangeMensaje = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMensaje(e.target.value);
+
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({
+        type: 'typing',
+        sender: username,
+      }));
+    }
   };
 
   const exportChats = () => {
@@ -143,12 +159,12 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
               <div
                 key={index}
                 className={`message ${
-                  msg.sender === nombre ? "user text-end" : "others"
+                  msg.sender === username ? "user text-end" : "others"
                 }`}
               >
                 <div className="message-text-wrapper">
                   <div className="message-sender">
-                    <strong>{msg.sender === nombre ? nombre : msg.sender}</strong>
+                    <strong>{msg.sender === username ? username : msg.sender}</strong>
                   </div>
                   <div className="message-text p-3 d-inline-block shadow-sm position-relative">
                     <div>{msg.text}</div>
@@ -158,6 +174,16 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
               </div>
             );
           })}
+
+          {usuarioEscribiendo && (
+            <div className="typing-indicator text-muted">
+              {usuarioEscribiendo} está escribiendo
+              <span className="dots">
+                <span></span><span></span><span></span>
+              </span>
+            </div>
+          )}
+
           <div ref={bottomRef}></div>
         </div>
 
@@ -223,16 +249,19 @@ export const Chat: React.FC<ChatProps> = ({ username }) => {
         <ul className="dropdown-menu">
           <li>
             <button className="dropdown-item" onClick={exportChats}>
+              <i className="bi bi-file-arrow-down me-2"></i>
               Exportar chats
             </button>
           </li>
           <li>
             <button className="dropdown-item" onClick={handleVerHistorial}>
+              <i className="bi bi-eye me-2"></i>
               Visualizar historial
             </button>
           </li>
           <li>
             <button className="dropdown-item" onClick={borrarChats}>
+              <i className="bi bi-trash3 me-2"></i>
               Borrar chats
             </button>
           </li>
